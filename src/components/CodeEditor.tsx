@@ -5,25 +5,28 @@ interface CodeEditorProps {
     initialCode?: string;
     onChange?: (code: string) => void;
     readOnly?: boolean;
+    language?: string;
 }
-
-const LANGUAGES = [
-    { id: 'python', name: 'Python', ext: 'py' },
-    { id: 'cpp', name: 'C++', ext: 'cpp' },
-    { id: 'java', name: 'Java', ext: 'java' },
-    { id: 'javascript', name: 'JavaScript', ext: 'js' },
-];
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
     initialCode = '',
     onChange,
-    readOnly = false
+    readOnly = false,
+    language = 'python'
 }) => {
-    const [language, setLanguage] = React.useState(LANGUAGES[0]);
-
     const handleEditorChange = (value: string | undefined) => {
         if (value !== undefined && onChange) {
             onChange(value);
+        }
+    };
+
+    const getExtension = (lang: string) => {
+        switch (lang) {
+            case 'python': return 'py';
+            case 'cpp': return 'cpp';
+            case 'java': return 'java';
+            case 'javascript': return 'js';
+            default: return 'txt';
         }
     };
 
@@ -37,29 +40,16 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
                         <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                         <div className="w-3 h-3 rounded-full bg-green-500"></div>
                     </div>
-                    <span className="ml-3 text-xs text-slate-400 font-mono">solution.{language.ext}</span>
+                    <span className="ml-3 text-xs text-slate-400 font-mono">solution.{getExtension(language)}</span>
                 </div>
-
-                {!readOnly ? (
-                    <select
-                        value={language.id}
-                        onChange={(e) => setLanguage(LANGUAGES.find(l => l.id === e.target.value) || LANGUAGES[0])}
-                        className="bg-[#3e3e42] text-slate-300 text-xs rounded px-2 py-1 border border-slate-600 focus:outline-none focus:border-blue-500"
-                    >
-                        {LANGUAGES.map(lang => (
-                            <option key={lang.id} value={lang.id}>{lang.name}</option>
-                        ))}
-                    </select>
-                ) : (
-                    <span className="text-xs text-slate-400">{language.name}</span>
-                )}
+                <span className="text-xs text-slate-400 uppercase">{language}</span>
             </div>
 
             {/* Monaco Editor */}
             <Editor
                 height="400px"
-                language={language.id}
-                defaultValue={initialCode}
+                language={language}
+                value={initialCode}
                 onChange={handleEditorChange}
                 theme="vs-dark"
                 options={{

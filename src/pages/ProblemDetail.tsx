@@ -12,6 +12,7 @@ const ProblemDetail: React.FC = () => {
     const { slug } = useParams<{ slug: string }>();
     const [problem, setProblem] = useState<Problem | null>(null);
     const [loading, setLoading] = useState(true);
+    const [selectedLanguage, setSelectedLanguage] = useState('python');
     const [userCode, setUserCode] = useState('');
     const [showSolution, setShowSolution] = useState(false);
     const [approachExpanded, setApproachExpanded] = useState(false);
@@ -40,11 +41,20 @@ const ProblemDetail: React.FC = () => {
                     data.tags = data.tags.filter(t => t.toLowerCase() !== 'hellointerview');
                 }
                 setProblem(data);
-                setUserCode(data?.starterCode || '');
+                if (data?.starterCode && typeof data.starterCode === 'object') {
+                    setUserCode(data.starterCode[selectedLanguage] || '');
+                }
                 setLoading(false);
             });
         }
     }, [slug]);
+
+    // Update code when language changes
+    useEffect(() => {
+        if (problem?.starterCode && typeof problem.starterCode === 'object') {
+            setUserCode(problem.starterCode[selectedLanguage] || '');
+        }
+    }, [selectedLanguage, problem]);
 
     if (loading) {
         return (
@@ -77,6 +87,39 @@ const ProblemDetail: React.FC = () => {
     const approachSection = sections.find(s => s.startsWith('## Approach')) || '';
     const solutionSection = sections.find(s => s.startsWith('## Solution')) || '';
     const hintsSection = sections.find(s => s.startsWith('## Hints')) || '';
+
+    // Parse solution for selected language
+    const getSolutionForLanguage = () => {
+        if (!solutionSection) return '';
+
+        // Split solution section by language headers (### Language)
+        const solutionParts = solutionSection.split(/(?=^###\s)/m);
+
+        // Find the part that matches the selected language
+        // Map internal keys to display names if necessary, or just use case-insensitive match
+        const languageMap: Record<string, string> = {
+            'python': 'Python',
+            'cpp': 'C++',
+            'java': 'Java',
+            'javascript': 'JavaScript'
+        };
+
+        const targetHeader = `### ${languageMap[selectedLanguage]}`;
+        const specificSolution = solutionParts.find(s => s.trim().startsWith(targetHeader));
+
+        if (specificSolution) {
+            return specificSolution.replace(targetHeader, '').trim();
+        }
+
+        // Fallback: if no specific language section found, return the whole thing or a default
+        // For now, let's try to return the first code block if no specific section matches, 
+        // or just return the whole section if it doesn't look like it has language subsections
+        if (solutionParts.length <= 1) return solutionSection.replace('## Solution', '');
+
+        return 'Solution not available for this language.';
+    };
+
+    const displayedSolution = getSolutionForLanguage();
 
     const handleToggleSolution = () => {
         setShowSolution(!showSolution);
@@ -188,6 +231,21 @@ const ProblemDetail: React.FC = () => {
                                 </div>
                                 <h2 className="text-2xl font-bold text-slate-900">Your Solution</h2>
                             </div>
+
+                            {/* Language Selector */}
+                            <div className="relative">
+                                <select
+                                    value={selectedLanguage}
+                                    onChange={(e) => setSelectedLanguage(e.target.value)}
+                                    className="appearance-none bg-white border border-slate-200 text-slate-700 py-2 pl-4 pr-10 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-sm cursor-pointer hover:border-slate-300 transition-all"
+                                >
+                                    <option value="python">Python</option>
+                                    <option value="cpp">C++</option>
+                                    <option value="java">Java</option>
+                                    <option value="javascript">JavaScript</option>
+                                </select>
+                                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                            </div>
                         </div>
 
                         {/* Subtle gradient divider */}
@@ -196,6 +254,7 @@ const ProblemDetail: React.FC = () => {
                         <CodeEditor
                             initialCode={userCode}
                             onChange={setUserCode}
+                            language={selectedLanguage}
                         />
 
                         {/* Action Button */}
@@ -211,7 +270,7 @@ const ProblemDetail: React.FC = () => {
                     </div>
 
                     {/* Solution Display - View Mode */}
-                    {showSolution && solutionSection && (
+                    {showSolution && displayedSolution && (
                         <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl p-6 md:p-10 border border-slate-700 shadow-2xl overflow-hidden">
                             {/* Animated gradient top border */}
                             <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 animate-pulse"></div>
@@ -223,7 +282,7 @@ const ProblemDetail: React.FC = () => {
                             <div className="relative">
                                 <div className="flex items-center gap-4 mb-8">
                                     <div className="h-12 w-1.5 bg-gradient-to-b from-green-400 to-emerald-500 rounded-full shadow-lg shadow-green-500/50"></div>
-                                    <h2 className="text-3xl font-bold text-white">Official Solution</h2>
+                                    <h2 className="text-3xl font-bold text-white">Official Solution ({selectedLanguage})</h2>
                                     <div className="ml-auto">
                                         <Sparkles className="w-6 h-6 text-purple-400" />
                                     </div>
@@ -233,7 +292,7 @@ const ProblemDetail: React.FC = () => {
                                 <div className="h-px bg-gradient-to-r from-slate-700 via-slate-600 to-transparent mb-8"></div>
 
                                 <div className="prose prose-invert prose-lg max-w-none">
-                                    <MarkdownRenderer content={solutionSection.replace('## Solution', '')} />
+                                    <MarkdownRenderer content={displayedSolution} />
                                 </div>
                             </div>
                         </div>

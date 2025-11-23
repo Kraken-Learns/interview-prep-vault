@@ -13,5 +13,5 @@ export interface Problem {
     date: string;
     content: string; // The full markdown content
     testCases?: TestCase[];
-    starterCode?: string;
+    starterCode?: Record<string, string>;
 }
