@@ -137,16 +137,16 @@ const Home: React.FC = () => {
             {/* Main Content */}
             <div className="space-y-12">
                 {/* Hero Section */}
-                <div className="relative -mx-8 -mt-8 px-8 py-16 mb-8 overflow-hidden">
+                <div className="relative -mt-8 px-8 py-8 mb-8 overflow-hidden w-full">
                     <div className="absolute inset-0 gradient-bg-animated opacity-10" />
                     <div className="absolute top-10 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float" />
                     <div className="absolute top-20 right-10 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float" style={{ animationDelay: '1s' }} />
                     <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float" style={{ animationDelay: '2s' }} />
                     <div className="relative text-center space-y-5">
-                        <h1 className="text-6xl font-bold tracking-tight">
+                        <h1 className="text-4xl font-bold tracking-tight w-full text-center">
                             <span className="gradient-text">Interview Prep Vault</span>
                         </h1>
-                        <p className="text-xl text-slate-600 max-w-2xl mx-auto font-medium">
+                        <p className="text-xl text-slate-600 w-full text-center font-medium">
                             Master your coding interviews with our curated collection of problems and solutions.
                         </p>
                     </div>
@@ -163,7 +163,7 @@ const Home: React.FC = () => {
                             onChange={(e) => setSearch(e.target.value)}
                             onFocus={() => setShowAutocomplete(true)}
                             onKeyDown={handleKeyDown}
-                            className="w-full pl-14 pr-12 py-4 rounded-2xl glass-strong border-0 focus:shadow-glow outline-none transition-all duration-300 text-slate-700 placeholder-slate-500 text-lg font-medium"
+                            className="w-full pl-14 pr-12 py-4 rounded-2xl glass-strong border-0 shadow-glow focus:shadow-glow outline-none transition-all duration-300 text-slate-700 placeholder-slate-500 text-lg font-medium"
                         />
                         {search && (
                             <button
