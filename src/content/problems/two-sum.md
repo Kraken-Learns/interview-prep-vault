@@ -2,7 +2,6 @@
 title: "Two Sum"
 difficulty: "Easy"
 tags: ["Array", "HashTable"]
-source: "HelloInterview"
 date: "2023-10-27"
 starterCode:
   python: |
