@@ -5,8 +5,9 @@ import type { Problem } from '@/types';
 import MarkdownRenderer from '@/components/MarkdownRenderer';
 import CodeEditor from '@/components/CodeEditor';
 import { useProgress } from '@/context/ProgressContext';
-import { ArrowLeft, Tag, ChevronDown, ChevronUp, Eye, EyeOff, Code2, TestTube, Lightbulb, Sparkles, CheckCircle, Circle } from 'lucide-react';
+import { ArrowLeft, Tag, ChevronDown, ChevronUp, Eye, EyeOff, Code2, TestTube, Lightbulb, Sparkles, CheckCircle, Circle, Bot } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import AIGuidance from '@/components/AIGuidance';
 
 const ProblemDetail: React.FC = () => {
     const { slug } = useParams<{ slug: string }>();
@@ -17,6 +18,7 @@ const ProblemDetail: React.FC = () => {
     const [showSolution, setShowSolution] = useState(false);
     const [approachExpanded, setApproachExpanded] = useState(false);
     const [showHint, setShowHint] = useState(false);
+    const [showAIGuidance, setShowAIGuidance] = useState(false);
     const { isProblemCompleted, toggleProblemCompletion } = useProgress();
 
     const isCompleted = slug ? isProblemCompleted(slug) : false;
@@ -261,10 +263,17 @@ const ProblemDetail: React.FC = () => {
                         <div className="flex gap-4 mt-8 pt-8 border-t border-slate-200">
                             <button
                                 onClick={handleToggleSolution}
-                                className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-2xl hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-2xl hover:scale-105 active:scale-100"
+                                className="flex-1 flex items-center justify-center gap-3 px-8 py-4 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-2xl hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm hover:shadow-md"
                             >
                                 {showSolution ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                                 <span>{showSolution ? 'Hide Solution' : 'View Solution'}</span>
+                            </button>
+                            <button
+                                onClick={() => setShowAIGuidance(true)}
+                                className="flex-1 flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-2xl hover:from-purple-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-2xl hover:scale-105 active:scale-100"
+                            >
+                                <Bot className="w-5 h-5" />
+                                <span>AI Guidance</span>
                             </button>
                         </div>
                     </div>
@@ -371,6 +380,16 @@ const ProblemDetail: React.FC = () => {
                     )}
                 </div>
             </div>
+
+            {/* AI Guidance Sidebar */}
+            {showAIGuidance && problem && (
+                <AIGuidance
+                    problem={problem}
+                    userCode={userCode}
+                    language={selectedLanguage}
+                    onClose={() => setShowAIGuidance(false)}
+                />
+            )}
         </div>
     );
 };
