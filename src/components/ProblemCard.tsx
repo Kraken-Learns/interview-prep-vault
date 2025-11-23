@@ -53,7 +53,6 @@ const ProblemCard: React.FC<ProblemCardProps> = ({ problem }) => {
                                 {problem.title}
                                 {isCompleted && <CheckCircle className="w-5 h-5 text-green-500" />}
                             </h3>
-                            <p className="text-sm text-slate-500 font-medium">{problem.source}</p>
                         </div>
                         <span className={`shrink-0 px-4 py-1.5 bg-gradient-to-r ${difficultyConfig.gradient} text-white rounded-full text-xs font-bold uppercase tracking-wide shadow-md`}>
                             {problem.difficulty}
