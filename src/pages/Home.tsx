@@ -8,6 +8,7 @@ const Home: React.FC = () => {
     const [problems, setProblems] = useState<Problem[]>([]);
     const [filteredProblems, setFilteredProblems] = useState<Problem[]>([]);
     const [search, setSearch] = useState('');
+    const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [allTags, setAllTags] = useState<string[]>([]);
     const [showAutocomplete, setShowAutocomplete] = useState(false);
     const [selectedTagIndex, setSelectedTagIndex] = useState(-1);
@@ -29,12 +30,22 @@ const Home: React.FC = () => {
 
     useEffect(() => {
         const lowerSearch = search.toLowerCase();
-        const filtered = problems.filter((p) =>
-            p.title.toLowerCase().includes(lowerSearch) ||
-            p.tags.some((t) => t.toLowerCase().includes(lowerSearch))
-        );
+        const filtered = problems.filter((p) => {
+            // Check if problem matches search text
+            const matchesSearch = !search ||
+                p.title.toLowerCase().includes(lowerSearch) ||
+                p.tags.some((t) => t.toLowerCase().includes(lowerSearch));
+
+            // Check if problem has all selected tags
+            const matchesTags = selectedTags.length === 0 ||
+                selectedTags.every(selectedTag =>
+                    p.tags.some(pTag => pTag.toLowerCase() === selectedTag.toLowerCase())
+                );
+
+            return matchesSearch && matchesTags;
+        });
         setFilteredProblems(filtered);
-    }, [search, problems]);
+    }, [search, selectedTags, problems]);
 
     // Close autocomplete when clicking outside
     useEffect(() => {
@@ -48,19 +59,30 @@ const Home: React.FC = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    // Get filtered tag suggestions
+    // Get filtered tag suggestions (exclude already selected tags)
     const getTagSuggestions = () => {
-        if (!search.trim()) return allTags;
+        const availableTags = allTags.filter(tag =>
+            !selectedTags.some(selected => selected.toLowerCase() === tag.toLowerCase())
+        );
+
+        if (!search.trim()) return availableTags;
         const lowerSearch = search.toLowerCase();
-        return allTags.filter(tag => tag.toLowerCase().includes(lowerSearch));
+        return availableTags.filter(tag => tag.toLowerCase().includes(lowerSearch));
     };
 
     const tagSuggestions = getTagSuggestions();
 
     const handleTagSelect = (tag: string) => {
-        setSearch(tag);
+        if (!selectedTags.includes(tag)) {
+            setSelectedTags([...selectedTags, tag]);
+        }
+        setSearch('');
         setShowAutocomplete(false);
         setSelectedTagIndex(-1);
+    };
+
+    const handleRemoveTag = (tagToRemove: string) => {
+        setSelectedTags(selectedTags.filter(tag => tag !== tagToRemove));
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -92,6 +114,13 @@ const Home: React.FC = () => {
 
     const handleClearSearch = () => {
         setSearch('');
+        setShowAutocomplete(false);
+        setSelectedTagIndex(-1);
+    };
+
+    const handleClearAll = () => {
+        setSearch('');
+        setSelectedTags([]);
         setShowAutocomplete(false);
         setSelectedTagIndex(-1);
     };
@@ -141,8 +170,8 @@ const Home: React.FC = () => {
                                     onClick={() => handleTagSelect(tag)}
                                     onMouseEnter={() => setSelectedTagIndex(index)}
                                     className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${index === selectedTagIndex
-                                            ? 'bg-blue-50 text-blue-700'
-                                            : 'text-slate-700 hover:bg-slate-50'
+                                        ? 'bg-blue-50 text-blue-700'
+                                        : 'text-slate-700 hover:bg-slate-50'
                                         }`}
                                 >
                                     <span className="flex items-center">
@@ -155,6 +184,36 @@ const Home: React.FC = () => {
                     </div>
                 )}
             </div>
+
+            {/* Selected Tags as Chips */}
+            {selectedTags.length > 0 && (
+                <div className="max-w-xl mx-auto">
+                    <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-sm font-medium text-slate-600">Filters:</span>
+                        {selectedTags.map((tag) => (
+                            <span
+                                key={tag}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-200 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-300 transition-colors group"
+                            >
+                                {tag}
+                                <button
+                                    onClick={() => handleRemoveTag(tag)}
+                                    className="hover:bg-slate-400 rounded-full p-0.5 transition-colors"
+                                    aria-label={`Remove ${tag} filter`}
+                                >
+                                    <X className="w-3.5 h-3.5" />
+                                </button>
+                            </span>
+                        ))}
+                        <button
+                            onClick={handleClearAll}
+                            className="text-sm text-slate-500 hover:text-slate-700 underline transition-colors"
+                        >
+                            Clear all
+                        </button>
+                    </div>
+                </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {filteredProblems.map((problem) => (
