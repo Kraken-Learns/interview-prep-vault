@@ -42,10 +42,10 @@ const SystemDesignView: React.FC = () => {
     const selectedTopic = TOPICS.find(t => t.id === selectedTopicId) || TOPICS[0];
 
     return (
-        <div className="flex gap-8 min-h-[calc(100vh-20rem)]">
+        <div className="flex flex-col md:flex-row gap-8 min-h-[calc(100vh-20rem)]">
             {/* Sidebar */}
-            <aside className="w-64 flex-shrink-0">
-                <div className="sticky top-24 space-y-2">
+            <aside className="w-full md:w-64 flex-shrink-0">
+                <div className="md:sticky md:top-24 space-y-2">
                     <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider px-4 mb-4">
                         Topics
                     </h3>
@@ -54,8 +54,8 @@ const SystemDesignView: React.FC = () => {
                             key={topic.id}
                             onClick={() => setSelectedTopicId(topic.id)}
                             className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200 font-medium ${selectedTopicId === topic.id
-                                    ? 'bg-purple-100 text-purple-700 shadow-sm'
-                                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                                ? 'bg-purple-100 text-purple-700 shadow-sm'
+                                : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                                 }`}
                         >
                             {topic.title}

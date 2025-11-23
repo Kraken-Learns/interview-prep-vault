@@ -7,11 +7,20 @@ interface CodeEditorProps {
     readOnly?: boolean;
 }
 
+const LANGUAGES = [
+    { id: 'python', name: 'Python', ext: 'py' },
+    { id: 'cpp', name: 'C++', ext: 'cpp' },
+    { id: 'java', name: 'Java', ext: 'java' },
+    { id: 'javascript', name: 'JavaScript', ext: 'js' },
+];
+
 const CodeEditor: React.FC<CodeEditorProps> = ({
     initialCode = '',
     onChange,
     readOnly = false
 }) => {
+    const [language, setLanguage] = React.useState(LANGUAGES[0]);
+
     const handleEditorChange = (value: string | undefined) => {
         if (value !== undefined && onChange) {
             onChange(value);
@@ -28,15 +37,28 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
                         <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                         <div className="w-3 h-3 rounded-full bg-green-500"></div>
                     </div>
-                    <span className="ml-3 text-xs text-slate-400 font-mono">solution.py</span>
+                    <span className="ml-3 text-xs text-slate-400 font-mono">solution.{language.ext}</span>
                 </div>
-                <span className="text-xs text-slate-400">Python</span>
+
+                {!readOnly ? (
+                    <select
+                        value={language.id}
+                        onChange={(e) => setLanguage(LANGUAGES.find(l => l.id === e.target.value) || LANGUAGES[0])}
+                        className="bg-[#3e3e42] text-slate-300 text-xs rounded px-2 py-1 border border-slate-600 focus:outline-none focus:border-blue-500"
+                    >
+                        {LANGUAGES.map(lang => (
+                            <option key={lang.id} value={lang.id}>{lang.name}</option>
+                        ))}
+                    </select>
+                ) : (
+                    <span className="text-xs text-slate-400">{language.name}</span>
+                )}
             </div>
 
             {/* Monaco Editor */}
             <Editor
                 height="400px"
-                defaultLanguage="python"
+                language={language.id}
                 defaultValue={initialCode}
                 onChange={handleEditorChange}
                 theme="vs-dark"

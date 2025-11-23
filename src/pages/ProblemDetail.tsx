@@ -15,6 +15,7 @@ const ProblemDetail: React.FC = () => {
     const [userCode, setUserCode] = useState('');
     const [showSolution, setShowSolution] = useState(false);
     const [approachExpanded, setApproachExpanded] = useState(false);
+    const [showHint, setShowHint] = useState(false);
     const { isProblemCompleted, toggleProblemCompletion } = useProgress();
 
     const isCompleted = slug ? isProblemCompleted(slug) : false;
@@ -35,6 +36,9 @@ const ProblemDetail: React.FC = () => {
     useEffect(() => {
         if (slug) {
             getProblem(slug).then((data) => {
+                if (data) {
+                    data.tags = data.tags.filter(t => t.toLowerCase() !== 'hellointerview');
+                }
                 setProblem(data);
                 setUserCode(data?.starterCode || '');
                 setLoading(false);
@@ -72,6 +76,7 @@ const ProblemDetail: React.FC = () => {
     const testCasesSection = sections.find(s => s.startsWith('## Test Cases')) || '';
     const approachSection = sections.find(s => s.startsWith('## Approach')) || '';
     const solutionSection = sections.find(s => s.startsWith('## Solution')) || '';
+    const hintsSection = sections.find(s => s.startsWith('## Hints')) || '';
 
     const handleToggleSolution = () => {
         setShowSolution(!showSolution);
@@ -91,22 +96,22 @@ const ProblemDetail: React.FC = () => {
 
                 <div className="space-y-8">
                     {/* Title and Tags - Hero Section */}
-                    <div className="relative bg-gradient-to-br from-white to-slate-50/50 rounded-3xl p-10 border border-slate-200/60 shadow-xl shadow-slate-200/50 overflow-hidden">
+                    <div className="relative bg-gradient-to-br from-white to-slate-50/50 rounded-3xl p-6 md:p-10 border border-slate-200/60 shadow-xl shadow-slate-200/50 overflow-hidden">
                         {/* Decorative gradient orb */}
                         <div className="absolute -top-20 -right-20 w-48 h-48 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
                         <div className="absolute -bottom-20 -left-20 w-48 h-48 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-3xl"></div>
 
                         <div className="relative">
-                            <div className="flex items-start justify-between mb-6">
-                                <h1 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight leading-tight pr-4">
+                            <div className="flex flex-col md:flex-row items-start justify-between gap-4 mb-6">
+                                <h1 className="text-3xl md:text-5xl font-bold text-slate-900 tracking-tight leading-tight pr-4">
                                     {problem.title}
                                 </h1>
                                 <div className="flex items-center gap-3">
                                     <button
                                         onClick={handleToggleCompletion}
                                         className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-300 shadow-md hover:scale-105 active:scale-95 ${isCompleted
-                                                ? 'bg-green-500 text-white hover:bg-green-600 shadow-green-200'
-                                                : 'bg-white text-slate-500 hover:text-slate-700 border-2 border-slate-200 hover:border-slate-300'
+                                            ? 'bg-green-500 text-white hover:bg-green-600 shadow-green-200'
+                                            : 'bg-white text-slate-500 hover:text-slate-700 border-2 border-slate-200 hover:border-slate-300'
                                             }`}
                                     >
                                         {isCompleted ? <CheckCircle className="w-5 h-5" /> : <Circle className="w-5 h-5" />}
@@ -138,7 +143,7 @@ const ProblemDetail: React.FC = () => {
 
                     {/* Problem Statement */}
                     {problemSection && (
-                        <div className="bg-white rounded-3xl p-10 border border-slate-200/60 shadow-lg hover:shadow-xl transition-all duration-300">
+                        <div className="bg-white rounded-3xl p-6 md:p-10 border border-slate-200/60 shadow-lg hover:shadow-xl transition-all duration-300">
                             <div className="flex items-center gap-3 mb-6">
                                 <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg">
                                     <Code2 className="w-5 h-5 text-white" />
@@ -157,7 +162,7 @@ const ProblemDetail: React.FC = () => {
 
                     {/* Test Cases */}
                     {testCasesSection && (
-                        <div className="bg-white rounded-3xl p-10 border border-slate-200/60 shadow-lg hover:shadow-xl transition-all duration-300">
+                        <div className="bg-white rounded-3xl p-6 md:p-10 border border-slate-200/60 shadow-lg hover:shadow-xl transition-all duration-300">
                             <div className="flex items-center gap-3 mb-6">
                                 <div className="p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg">
                                     <TestTube className="w-5 h-5 text-white" />
@@ -175,7 +180,7 @@ const ProblemDetail: React.FC = () => {
                     )}
 
                     {/* Code Editor */}
-                    <div className="bg-gradient-to-br from-white to-slate-50/50 rounded-3xl p-10 border border-slate-200/60 shadow-xl">
+                    <div className="bg-gradient-to-br from-white to-slate-50/50 rounded-3xl p-4 md:p-10 border border-slate-200/60 shadow-xl">
                         <div className="flex items-center justify-between mb-8">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl shadow-lg">
@@ -207,7 +212,7 @@ const ProblemDetail: React.FC = () => {
 
                     {/* Solution Display - View Mode */}
                     {showSolution && solutionSection && (
-                        <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl p-10 border border-slate-700 shadow-2xl overflow-hidden">
+                        <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl p-6 md:p-10 border border-slate-700 shadow-2xl overflow-hidden">
                             {/* Animated gradient top border */}
                             <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 animate-pulse"></div>
 
@@ -234,12 +239,45 @@ const ProblemDetail: React.FC = () => {
                         </div>
                     )}
 
+                    {/* Hints */}
+                    {hintsSection && (
+                        <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl border border-amber-200/60 shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
+                            <button
+                                onClick={() => setShowHint(!showHint)}
+                                className="w-full flex items-center justify-between p-6 md:p-10 text-left hover:bg-white/40 transition-all duration-300 group"
+                            >
+                                <div className="flex items-center gap-4">
+                                    <div className="p-2 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl shadow-lg">
+                                        <Lightbulb className="w-5 h-5 text-white" />
+                                    </div>
+                                    <h2 className="text-2xl font-bold text-slate-900">Need a Hint?</h2>
+                                </div>
+                                <div className={`p-2 rounded-xl transition-all duration-300 ${showHint ? 'bg-amber-200/50' : 'bg-amber-100/50 group-hover:bg-amber-200/50'}`}>
+                                    {showHint ? (
+                                        <ChevronUp className="w-6 h-6 text-amber-700" />
+                                    ) : (
+                                        <ChevronDown className="w-6 h-6 text-amber-700" />
+                                    )}
+                                </div>
+                            </button>
+
+                            {showHint && (
+                                <div className="px-6 md:px-10 pb-6 md:pb-10">
+                                    <div className="h-px bg-gradient-to-r from-amber-200 via-orange-100 to-transparent mb-8"></div>
+                                    <div className="prose prose-slate prose-lg max-w-none">
+                                        <MarkdownRenderer content={hintsSection.replace('## Hints', '')} />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
                     {/* Approach - Collapsible */}
                     {approachSection && (
                         <div className="bg-white rounded-3xl border border-slate-200/60 shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
                             <button
                                 onClick={() => setApproachExpanded(!approachExpanded)}
-                                className="w-full flex items-center justify-between p-10 text-left hover:bg-gradient-to-r hover:from-slate-50 hover:to-blue-50/30 transition-all duration-300 group"
+                                className="w-full flex items-center justify-between p-6 md:p-10 text-left hover:bg-gradient-to-r hover:from-slate-50 hover:to-blue-50/30 transition-all duration-300 group"
                             >
                                 <div className="flex items-center gap-4">
                                     <div className={`p-2 bg-gradient-to-br rounded-xl shadow-lg transition-all duration-300 ${approachExpanded
@@ -261,7 +299,7 @@ const ProblemDetail: React.FC = () => {
                             </button>
 
                             {approachExpanded && (
-                                <div className="px-10 pb-10">
+                                <div className="px-6 md:px-10 pb-6 md:pb-10">
                                     {/* Gradient divider */}
                                     <div className="h-px bg-gradient-to-r from-orange-200 via-amber-100 to-transparent mb-8"></div>
 

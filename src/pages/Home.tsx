@@ -22,10 +22,15 @@ const Home: React.FC = () => {
     // Load problems and extract tags
     useEffect(() => {
         getAllProblems().then((data) => {
-            setProblems(data);
-            setFilteredProblems(data);
+            // Filter out 'hellointerview' tag from problems
+            const cleanedData = data.map(p => ({
+                ...p,
+                tags: p.tags.filter(t => t.toLowerCase() !== 'hellointerview')
+            }));
+            setProblems(cleanedData);
+            setFilteredProblems(cleanedData);
             const tags = new Set<string>();
-            data.forEach((p) => p.tags.forEach((t) => tags.add(t)));
+            cleanedData.forEach((p) => p.tags.forEach((t) => tags.add(t)));
             setAllTags(Array.from(tags).sort());
         });
     }, []);
@@ -151,7 +156,7 @@ const Home: React.FC = () => {
     return (
         <div className="space-y-8">
             {/* Hero Section */}
-            <div className="relative -mt-8 px-8 py-8 overflow-hidden w-full">
+            <div className="relative -mt-8 px-4 md:px-8 py-8 overflow-hidden w-full">
                 <div className="absolute inset-0 gradient-bg-animated opacity-10" />
                 <div className="absolute top-10 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float" />
                 <div className="absolute top-20 right-10 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float" style={{ animationDelay: '1s' }} />
@@ -167,12 +172,12 @@ const Home: React.FC = () => {
             </div>
 
             {/* Category Navigation */}
-            <div className="flex justify-center gap-4">
+            <div className="flex flex-wrap justify-center gap-4">
                 <button
                     onClick={() => setActiveCategory('coding')}
                     className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${activeCategory === 'coding'
-                            ? 'bg-white text-purple-600 shadow-md ring-2 ring-purple-100'
-                            : 'text-slate-600 hover:bg-white/60 hover:text-slate-900'
+                        ? 'bg-white text-purple-600 shadow-md ring-2 ring-purple-100'
+                        : 'text-slate-600 hover:bg-white/60 hover:text-slate-900'
                         }`}
                 >
                     <Code2 className="w-5 h-5" />
@@ -181,8 +186,8 @@ const Home: React.FC = () => {
                 <button
                     onClick={() => setActiveCategory('system-design')}
                     className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${activeCategory === 'system-design'
-                            ? 'bg-white text-purple-600 shadow-md ring-2 ring-purple-100'
-                            : 'text-slate-600 hover:bg-white/60 hover:text-slate-900'
+                        ? 'bg-white text-purple-600 shadow-md ring-2 ring-purple-100'
+                        : 'text-slate-600 hover:bg-white/60 hover:text-slate-900'
                         }`}
                 >
                     <Network className="w-5 h-5" />
@@ -191,8 +196,8 @@ const Home: React.FC = () => {
                 <button
                     onClick={() => setActiveCategory('library')}
                     className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${activeCategory === 'library'
-                            ? 'bg-white text-purple-600 shadow-md ring-2 ring-purple-100'
-                            : 'text-slate-600 hover:bg-white/60 hover:text-slate-900'
+                        ? 'bg-white text-purple-600 shadow-md ring-2 ring-purple-100'
+                        : 'text-slate-600 hover:bg-white/60 hover:text-slate-900'
                         }`}
                 >
                     <Library className="w-5 h-5" />
@@ -202,7 +207,7 @@ const Home: React.FC = () => {
 
             {/* Content Area */}
             {activeCategory === 'coding' && (
-                <div className="flex gap-6">
+                <div className="flex flex-col lg:flex-row gap-6">
                     {/* Sidebar */}
                     <aside className="hidden lg:block w-72 flex-shrink-0">
                         <TagSidebar
