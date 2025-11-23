@@ -1,6 +1,5 @@
-import React, { useState, useRef, type KeyboardEvent } from 'react';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import React from 'react';
+import Editor from '@monaco-editor/react';
 
 interface CodeEditorProps {
     initialCode?: string;
@@ -13,39 +12,14 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     onChange,
     readOnly = false
 }) => {
-    const [code, setCode] = useState(initialCode);
-    const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-    const handleCodeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        const newCode = e.target.value;
-        setCode(newCode);
-        onChange?.(newCode);
-    };
-
-    const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key === 'Tab') {
-            e.preventDefault();
-            const textarea = textareaRef.current;
-            if (!textarea) return;
-
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const newCode = code.substring(0, start) + '    ' + code.substring(end);
-
-            setCode(newCode);
-            onChange?.(newCode);
-
-            // Set cursor position after the inserted spaces
-            setTimeout(() => {
-                textarea.selectionStart = textarea.selectionEnd = start + 4;
-            }, 0);
+    const handleEditorChange = (value: string | undefined) => {
+        if (value !== undefined && onChange) {
+            onChange(value);
         }
     };
 
-    const lineCount = code.split('\n').length;
-
     return (
-        <div className="relative rounded-xl overflow-hidden border border-slate-700 bg-[#1e1e1e] shadow-2xl">
+        <div className="rounded-xl overflow-hidden border border-slate-700 shadow-2xl">
             {/* Editor Header */}
             <div className="flex items-center justify-between px-4 py-2 bg-[#2d2d30] border-b border-slate-700">
                 <div className="flex items-center gap-2">
@@ -59,56 +33,52 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
                 <span className="text-xs text-slate-400">Python</span>
             </div>
 
-            {/* Editor Content */}
-            <div className="relative">
-                {/* Line Numbers */}
-                <div className="absolute left-0 top-0 bottom-0 w-12 bg-[#1e1e1e] border-r border-slate-700 pt-4 pb-4 text-right pr-3 select-none pointer-events-none z-10">
-                    {Array.from({ length: lineCount }, (_, i) => (
-                        <div key={i} className="text-xs text-slate-500 leading-6 font-mono">
-                            {i + 1}
-                        </div>
-                    ))}
-                </div>
-
-                {/* Code Display (Syntax Highlighted) */}
-                <div className="absolute left-12 top-0 right-0 bottom-0 overflow-hidden pointer-events-none">
-                    <SyntaxHighlighter
-                        language="python"
-                        style={vscDarkPlus}
-                        customStyle={{
-                            margin: 0,
-                            padding: '1rem 1rem',
-                            background: 'transparent',
-                            fontSize: '0.875rem',
-                            lineHeight: '1.5rem',
-                            fontFamily: "'Fira Code', 'Consolas', monospace",
-                        }}
-                        codeTagProps={{
-                            style: {
-                                fontFamily: "'Fira Code', 'Consolas', monospace",
-                            }
-                        }}
-                    >
-                        {code || ' '}
-                    </SyntaxHighlighter>
-                </div>
-
-                {/* Textarea (Invisible but functional) */}
-                <textarea
-                    ref={textareaRef}
-                    value={code}
-                    onChange={handleCodeChange}
-                    onKeyDown={handleKeyDown}
-                    readOnly={readOnly}
-                    spellCheck={false}
-                    className="relative block w-full pl-12 pr-4 py-4 bg-transparent text-transparent caret-white outline-none resize-none font-mono text-sm leading-6 z-20"
-                    style={{
-                        minHeight: '300px',
-                        fontFamily: "'Fira Code', 'Consolas', monospace",
-                        caretColor: 'white',
-                    }}
-                />
-            </div>
+            {/* Monaco Editor */}
+            <Editor
+                height="400px"
+                defaultLanguage="python"
+                defaultValue={initialCode}
+                onChange={handleEditorChange}
+                theme="vs-dark"
+                options={{
+                    minimap: { enabled: false },
+                    fontSize: 14,
+                    fontFamily: "'Fira Code', 'Consolas', monospace",
+                    lineNumbers: 'on',
+                    scrollBeyondLastLine: false,
+                    automaticLayout: true,
+                    tabSize: 4,
+                    insertSpaces: true,
+                    wordWrap: 'on',
+                    readOnly: readOnly,
+                    padding: { top: 16, bottom: 16 },
+                    renderLineHighlight: 'all',
+                    cursorBlinking: 'smooth',
+                    smoothScrolling: true,
+                    contextmenu: true,
+                    folding: true,
+                    lineDecorationsWidth: 10,
+                    lineNumbersMinChars: 3,
+                    glyphMargin: false,
+                    renderWhitespace: 'selection',
+                    bracketPairColorization: {
+                        enabled: true,
+                    },
+                    guides: {
+                        indentation: true,
+                        bracketPairs: true,
+                    },
+                    suggest: {
+                        showKeywords: true,
+                        showSnippets: true,
+                    },
+                    quickSuggestions: {
+                        other: true,
+                        comments: false,
+                        strings: false,
+                    },
+                }}
+            />
         </div>
     );
 };
