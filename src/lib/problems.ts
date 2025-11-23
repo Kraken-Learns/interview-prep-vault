@@ -18,6 +18,7 @@ export async function getAllProblems(): Promise<Problem[]> {
             source: data.source || 'Unknown',
             date: data.date || new Date().toISOString(),
             content,
+            starterCode: data.starterCode || '',
         });
     }
 
