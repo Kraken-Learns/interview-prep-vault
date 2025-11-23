@@ -1,18 +1,29 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { getAllProblems } from '@/lib/problems';
 import type { Problem } from '@/types';
 import ProblemCard from '@/components/ProblemCard';
-import { Search } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 
 const Home: React.FC = () => {
     const [problems, setProblems] = useState<Problem[]>([]);
     const [filteredProblems, setFilteredProblems] = useState<Problem[]>([]);
     const [search, setSearch] = useState('');
+    const [allTags, setAllTags] = useState<string[]>([]);
+    const [showAutocomplete, setShowAutocomplete] = useState(false);
+    const [selectedTagIndex, setSelectedTagIndex] = useState(-1);
+    const searchRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         getAllProblems().then((data) => {
             setProblems(data);
             setFilteredProblems(data);
+
+            // Extract all unique tags
+            const tags = new Set<string>();
+            data.forEach(problem => {
+                problem.tags.forEach(tag => tags.add(tag));
+            });
+            setAllTags(Array.from(tags).sort());
         });
     }, []);
 
@@ -25,6 +36,66 @@ const Home: React.FC = () => {
         setFilteredProblems(filtered);
     }, [search, problems]);
 
+    // Close autocomplete when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+                setShowAutocomplete(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    // Get filtered tag suggestions
+    const getTagSuggestions = () => {
+        if (!search.trim()) return allTags;
+        const lowerSearch = search.toLowerCase();
+        return allTags.filter(tag => tag.toLowerCase().includes(lowerSearch));
+    };
+
+    const tagSuggestions = getTagSuggestions();
+
+    const handleTagSelect = (tag: string) => {
+        setSearch(tag);
+        setShowAutocomplete(false);
+        setSelectedTagIndex(-1);
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (!showAutocomplete) return;
+
+        switch (e.key) {
+            case 'ArrowDown':
+                e.preventDefault();
+                setSelectedTagIndex(prev =>
+                    prev < tagSuggestions.length - 1 ? prev + 1 : prev
+                );
+                break;
+            case 'ArrowUp':
+                e.preventDefault();
+                setSelectedTagIndex(prev => prev > 0 ? prev - 1 : -1);
+                break;
+            case 'Enter':
+                e.preventDefault();
+                if (selectedTagIndex >= 0 && tagSuggestions[selectedTagIndex]) {
+                    handleTagSelect(tagSuggestions[selectedTagIndex]);
+                }
+                break;
+            case 'Escape':
+                setShowAutocomplete(false);
+                setSelectedTagIndex(-1);
+                break;
+        }
+    };
+
+    const handleClearSearch = () => {
+        setSearch('');
+        setShowAutocomplete(false);
+        setSelectedTagIndex(-1);
+    };
+
     return (
         <div className="space-y-8">
             <div className="text-center space-y-4">
@@ -36,15 +107,53 @@ const Home: React.FC = () => {
                 </p>
             </div>
 
-            <div className="relative max-w-xl mx-auto">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <div className="relative max-w-xl mx-auto" ref={searchRef}>
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 z-10" />
                 <input
                     type="text"
                     placeholder="Search problems or tags..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all shadow-sm"
+                    onFocus={() => setShowAutocomplete(true)}
+                    onKeyDown={handleKeyDown}
+                    className="w-full pl-12 pr-10 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all shadow-sm"
                 />
+                {search && (
+                    <button
+                        onClick={handleClearSearch}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors z-10"
+                        aria-label="Clear search"
+                    >
+                        <X className="w-4 h-4" />
+                    </button>
+                )}
+
+                {/* Autocomplete Dropdown */}
+                {showAutocomplete && tagSuggestions.length > 0 && (
+                    <div className="absolute top-full mt-2 w-full bg-white rounded-xl border border-slate-200 shadow-lg max-h-64 overflow-y-auto z-20">
+                        <div className="p-2">
+                            <p className="text-xs font-semibold text-slate-500 px-3 py-2">
+                                {search ? 'Matching Tags' : 'All Tags'}
+                            </p>
+                            {tagSuggestions.map((tag, index) => (
+                                <button
+                                    key={tag}
+                                    onClick={() => handleTagSelect(tag)}
+                                    onMouseEnter={() => setSelectedTagIndex(index)}
+                                    className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${index === selectedTagIndex
+                                            ? 'bg-blue-50 text-blue-700'
+                                            : 'text-slate-700 hover:bg-slate-50'
+                                        }`}
+                                >
+                                    <span className="flex items-center">
+                                        <span className="inline-block w-2 h-2 rounded-full bg-slate-400 mr-2"></span>
+                                        {tag}
+                                    </span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

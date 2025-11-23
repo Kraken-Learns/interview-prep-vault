@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { getProblem } from '@/lib/problems';
 import type { Problem } from '@/types';
 import MarkdownRenderer from '@/components/MarkdownRenderer';
-import { ArrowLeft, Calendar, Tag } from 'lucide-react';
+import { ArrowLeft, Tag } from 'lucide-react';
 
 const ProblemDetail: React.FC = () => {
     const { slug } = useParams<{ slug: string }>();
@@ -62,14 +62,10 @@ const ProblemDetail: React.FC = () => {
                             <h1 className="text-3xl font-bold text-slate-900 mb-4 tracking-tight">{problem.title}</h1>
                             <div className="flex flex-wrap gap-3 text-sm">
                                 <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${problem.difficulty === 'Easy' ? 'bg-green-50 text-green-700 border-green-200' :
-                                        problem.difficulty === 'Medium' ? 'bg-yellow-50 text-yellow-700 border-yellow-200' :
-                                            'bg-red-50 text-red-700 border-red-200'
+                                    problem.difficulty === 'Medium' ? 'bg-yellow-50 text-yellow-700 border-yellow-200' :
+                                        'bg-red-50 text-red-700 border-red-200'
                                     }`}>
                                     {problem.difficulty}
-                                </span>
-                                <span className="flex items-center text-slate-500 bg-slate-50 px-3 py-1 rounded-full border border-slate-200">
-                                    <Calendar className="w-3.5 h-3.5 mr-1.5" />
-                                    {new Date(problem.date).toLocaleDateString()}
                                 </span>
                                 <span className="flex items-center text-slate-500 bg-slate-50 px-3 py-1 rounded-full border border-slate-200">
                                     <Tag className="w-3.5 h-3.5 mr-1.5" />
@@ -89,19 +85,6 @@ const ProblemDetail: React.FC = () => {
                     </div>
                 )}
 
-                {/* Approach */}
-                {approachSection && (
-                    <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
-                        <div className="flex items-center mb-6">
-                            <div className="h-8 w-1 bg-blue-500 rounded-full mr-4"></div>
-                            <h2 className="text-2xl font-bold text-slate-900">Approach</h2>
-                        </div>
-                        <div className="prose prose-slate max-w-none">
-                            <MarkdownRenderer content={approachSection.replace('## Approach', '')} />
-                        </div>
-                    </div>
-                )}
-
                 {/* Solution */}
                 {solutionSection && (
                     <div className="bg-slate-900 rounded-2xl p-8 border border-slate-800 shadow-xl overflow-hidden relative">
@@ -112,6 +95,19 @@ const ProblemDetail: React.FC = () => {
                         </div>
                         <div className="prose prose-invert max-w-none">
                             <MarkdownRenderer content={solutionSection.replace('## Solution', '')} />
+                        </div>
+                    </div>
+                )}
+
+                {/* Approach */}
+                {approachSection && (
+                    <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
+                        <div className="flex items-center mb-6">
+                            <div className="h-8 w-1 bg-blue-500 rounded-full mr-4"></div>
+                            <h2 className="text-2xl font-bold text-slate-900">Approach</h2>
+                        </div>
+                        <div className="prose prose-slate max-w-none">
+                            <MarkdownRenderer content={approachSection.replace('## Approach', '')} />
                         </div>
                     </div>
                 )}

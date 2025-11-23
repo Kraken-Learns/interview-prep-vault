@@ -38,7 +38,7 @@ const ProblemCard: React.FC<ProblemCardProps> = ({ problem }) => {
                 </div>
 
                 <div className="flex items-center text-sm font-medium text-slate-400 group-hover:text-blue-600 transition-colors">
-                    View Solution <ArrowRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" />
+                    View Problem <ArrowRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" />
                 </div>
             </div>
         </Link>
