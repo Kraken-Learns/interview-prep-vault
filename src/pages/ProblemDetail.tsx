@@ -4,7 +4,9 @@ import { getProblem } from '@/lib/problems';
 import type { Problem } from '@/types';
 import MarkdownRenderer from '@/components/MarkdownRenderer';
 import CodeEditor from '@/components/CodeEditor';
-import { ArrowLeft, Tag, ChevronDown, ChevronUp, Eye, EyeOff, Code2, TestTube, Lightbulb, Sparkles } from 'lucide-react';
+import { useProgress } from '@/context/ProgressContext';
+import { ArrowLeft, Tag, ChevronDown, ChevronUp, Eye, EyeOff, Code2, TestTube, Lightbulb, Sparkles, CheckCircle, Circle } from 'lucide-react';
+import confetti from 'canvas-confetti';
 
 const ProblemDetail: React.FC = () => {
     const { slug } = useParams<{ slug: string }>();
@@ -13,6 +15,22 @@ const ProblemDetail: React.FC = () => {
     const [userCode, setUserCode] = useState('');
     const [showSolution, setShowSolution] = useState(false);
     const [approachExpanded, setApproachExpanded] = useState(false);
+    const { isProblemCompleted, toggleProblemCompletion } = useProgress();
+
+    const isCompleted = slug ? isProblemCompleted(slug) : false;
+
+    const handleToggleCompletion = () => {
+        if (slug) {
+            toggleProblemCompletion(slug);
+            if (!isCompleted) {
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+    };
 
     useEffect(() => {
         if (slug) {
@@ -83,7 +101,19 @@ const ProblemDetail: React.FC = () => {
                                 <h1 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight leading-tight pr-4">
                                     {problem.title}
                                 </h1>
-                                <Sparkles className="w-8 h-8 text-purple-500 flex-shrink-0 mt-1" />
+                                <div className="flex items-center gap-3">
+                                    <button
+                                        onClick={handleToggleCompletion}
+                                        className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-300 shadow-md hover:scale-105 active:scale-95 ${isCompleted
+                                                ? 'bg-green-500 text-white hover:bg-green-600 shadow-green-200'
+                                                : 'bg-white text-slate-500 hover:text-slate-700 border-2 border-slate-200 hover:border-slate-300'
+                                            }`}
+                                    >
+                                        {isCompleted ? <CheckCircle className="w-5 h-5" /> : <Circle className="w-5 h-5" />}
+                                        <span>{isCompleted ? 'Completed' : 'Mark Complete'}</span>
+                                    </button>
+                                    <Sparkles className="w-8 h-8 text-purple-500 flex-shrink-0 mt-1" />
+                                </div>
                             </div>
 
                             {/* Elegant divider */}
@@ -91,10 +121,10 @@ const ProblemDetail: React.FC = () => {
 
                             <div className="flex flex-wrap gap-3">
                                 <span className={`inline-flex items-center px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition-transform hover:scale-105 ${problem.difficulty === 'Easy'
-                                        ? 'bg-gradient-to-br from-green-50 to-emerald-50 text-green-700 border-2 border-green-200' :
-                                        problem.difficulty === 'Medium'
-                                            ? 'bg-gradient-to-br from-yellow-50 to-amber-50 text-yellow-700 border-2 border-yellow-200' :
-                                            'bg-gradient-to-br from-red-50 to-rose-50 text-red-700 border-2 border-red-200'
+                                    ? 'bg-gradient-to-br from-green-50 to-emerald-50 text-green-700 border-2 border-green-200' :
+                                    problem.difficulty === 'Medium'
+                                        ? 'bg-gradient-to-br from-yellow-50 to-amber-50 text-yellow-700 border-2 border-yellow-200' :
+                                        'bg-gradient-to-br from-red-50 to-rose-50 text-red-700 border-2 border-red-200'
                                     }`}>
                                     {problem.difficulty}
                                 </span>
@@ -213,8 +243,8 @@ const ProblemDetail: React.FC = () => {
                             >
                                 <div className="flex items-center gap-4">
                                     <div className={`p-2 bg-gradient-to-br rounded-xl shadow-lg transition-all duration-300 ${approachExpanded
-                                            ? 'from-orange-500 to-amber-600'
-                                            : 'from-blue-500 to-indigo-600'
+                                        ? 'from-orange-500 to-amber-600'
+                                        : 'from-blue-500 to-indigo-600'
                                         }`}>
                                         <Lightbulb className="w-5 h-5 text-white" />
                                     </div>

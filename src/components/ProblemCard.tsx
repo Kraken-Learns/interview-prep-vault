@@ -1,13 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import type { Problem } from '@/types';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, CheckCircle } from 'lucide-react';
+import { useProgress } from '@/context/ProgressContext';
 
 interface ProblemCardProps {
     problem: Problem;
 }
 
 const ProblemCard: React.FC<ProblemCardProps> = ({ problem }) => {
+    const { isProblemCompleted } = useProgress();
+    const isCompleted = isProblemCompleted(problem.slug);
+
     const difficultyConfig = {
         Easy: {
             gradient: 'from-green-400 to-emerald-500',
@@ -37,11 +41,17 @@ const ProblemCard: React.FC<ProblemCardProps> = ({ problem }) => {
                     <div className="absolute inset-0 animate-shimmer"></div>
                 </div>
 
+                {/* Completion Indicator Strip */}
+                {isCompleted && (
+                    <div className="absolute top-0 left-0 w-1.5 h-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
+                )}
+
                 <div className="relative z-10">
                     <div className="flex justify-between items-start mb-5">
                         <div className="flex-1 pr-4">
-                            <h3 className="text-xl font-bold text-slate-900 group-hover:gradient-text transition-all duration-300 mb-2">
+                            <h3 className="text-xl font-bold text-slate-900 group-hover:gradient-text transition-all duration-300 mb-2 flex items-center gap-2">
                                 {problem.title}
+                                {isCompleted && <CheckCircle className="w-5 h-5 text-green-500" />}
                             </h3>
                             <p className="text-sm text-slate-500 font-medium">{problem.source}</p>
                         </div>
