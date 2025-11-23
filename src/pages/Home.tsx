@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { getAllProblems } from '@/lib/problems';
 import type { Problem } from '@/types';
 import ProblemCard from '@/components/ProblemCard';
+import TagSidebar from '@/components/TagSidebar';
 import { Search, X } from 'lucide-react';
 
 const Home: React.FC = () => {
@@ -14,34 +15,30 @@ const Home: React.FC = () => {
     const [selectedTagIndex, setSelectedTagIndex] = useState(-1);
     const searchRef = useRef<HTMLDivElement>(null);
 
+    // Load problems and extract tags
     useEffect(() => {
         getAllProblems().then((data) => {
             setProblems(data);
             setFilteredProblems(data);
-
-            // Extract all unique tags
             const tags = new Set<string>();
-            data.forEach(problem => {
-                problem.tags.forEach(tag => tags.add(tag));
-            });
+            data.forEach((p) => p.tags.forEach((t) => tags.add(t)));
             setAllTags(Array.from(tags).sort());
         });
     }, []);
 
+    // Filter based on search and selected tags
     useEffect(() => {
         const lowerSearch = search.toLowerCase();
         const filtered = problems.filter((p) => {
-            // Check if problem matches search text
-            const matchesSearch = !search ||
+            const matchesSearch =
+                !search ||
                 p.title.toLowerCase().includes(lowerSearch) ||
                 p.tags.some((t) => t.toLowerCase().includes(lowerSearch));
-
-            // Check if problem has all selected tags
-            const matchesTags = selectedTags.length === 0 ||
-                selectedTags.every(selectedTag =>
-                    p.tags.some(pTag => pTag.toLowerCase() === selectedTag.toLowerCase())
+            const matchesTags =
+                selectedTags.length === 0 ||
+                selectedTags.every((sel) =>
+                    p.tags.some((pt) => pt.toLowerCase() === sel.toLowerCase())
                 );
-
             return matchesSearch && matchesTags;
         });
         setFilteredProblems(filtered);
@@ -54,50 +51,42 @@ const Home: React.FC = () => {
                 setShowAutocomplete(false);
             }
         };
-
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    // Get filtered tag suggestions (exclude already selected tags)
     const getTagSuggestions = () => {
-        const availableTags = allTags.filter(tag =>
-            !selectedTags.some(selected => selected.toLowerCase() === tag.toLowerCase())
+        const available = allTags.filter(
+            (tag) => !selectedTags.some((s) => s.toLowerCase() === tag.toLowerCase())
         );
-
-        if (!search.trim()) return availableTags;
-        const lowerSearch = search.toLowerCase();
-        return availableTags.filter(tag => tag.toLowerCase().includes(lowerSearch));
+        if (!search.trim()) return available;
+        const lower = search.toLowerCase();
+        return available.filter((tag) => tag.toLowerCase().includes(lower));
     };
 
     const tagSuggestions = getTagSuggestions();
 
     const handleTagSelect = (tag: string) => {
-        if (!selectedTags.includes(tag)) {
-            setSelectedTags([...selectedTags, tag]);
-        }
+        if (!selectedTags.includes(tag)) setSelectedTags([...selectedTags, tag]);
         setSearch('');
         setShowAutocomplete(false);
         setSelectedTagIndex(-1);
     };
 
     const handleRemoveTag = (tagToRemove: string) => {
-        setSelectedTags(selectedTags.filter(tag => tag !== tagToRemove));
+        setSelectedTags(selectedTags.filter((t) => t !== tagToRemove));
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (!showAutocomplete) return;
-
         switch (e.key) {
             case 'ArrowDown':
                 e.preventDefault();
-                setSelectedTagIndex(prev =>
-                    prev < tagSuggestions.length - 1 ? prev + 1 : prev
-                );
+                setSelectedTagIndex((prev) => (prev < tagSuggestions.length - 1 ? prev + 1 : prev));
                 break;
             case 'ArrowUp':
                 e.preventDefault();
-                setSelectedTagIndex(prev => prev > 0 ? prev - 1 : -1);
+                setSelectedTagIndex((prev) => (prev > 0 ? prev - 1 : -1));
                 break;
             case 'Enter':
                 e.preventDefault();
@@ -125,107 +114,143 @@ const Home: React.FC = () => {
         setSelectedTagIndex(-1);
     };
 
+    const handleTagToggle = (tag: string) => {
+        if (selectedTags.some((t) => t.toLowerCase() === tag.toLowerCase())) {
+            setSelectedTags(selectedTags.filter((t) => t.toLowerCase() !== tag.toLowerCase()));
+        } else {
+            setSelectedTags([...selectedTags, tag]);
+        }
+    };
+
     return (
-        <div className="space-y-8">
-            <div className="text-center space-y-4">
-                <h1 className="text-4xl font-bold text-slate-900 tracking-tight">
-                    Interview Prep Vault
-                </h1>
-                <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-                    A collection of coding interview problems and solutions.
-                </p>
-            </div>
-
-            <div className="relative max-w-xl mx-auto" ref={searchRef}>
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 z-10" />
-                <input
-                    type="text"
-                    placeholder="Search problems or tags..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    onFocus={() => setShowAutocomplete(true)}
-                    onKeyDown={handleKeyDown}
-                    className="w-full pl-12 pr-10 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all shadow-sm"
+        <div className="flex gap-6">
+            {/* Sidebar */}
+            <aside className="hidden lg:block w-72 flex-shrink-0">
+                <TagSidebar
+                    allTags={allTags}
+                    selectedTags={selectedTags}
+                    onTagToggle={handleTagToggle}
+                    problems={problems}
                 />
-                {search && (
-                    <button
-                        onClick={handleClearSearch}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors z-10"
-                        aria-label="Clear search"
-                    >
-                        <X className="w-4 h-4" />
-                    </button>
-                )}
+            </aside>
 
-                {/* Autocomplete Dropdown */}
-                {showAutocomplete && tagSuggestions.length > 0 && (
-                    <div className="absolute top-full mt-2 w-full bg-white rounded-xl border border-slate-200 shadow-lg max-h-64 overflow-y-auto z-20">
-                        <div className="p-2">
-                            <p className="text-xs font-semibold text-slate-500 px-3 py-2">
-                                {search ? 'Matching Tags' : 'All Tags'}
-                            </p>
-                            {tagSuggestions.map((tag, index) => (
-                                <button
+            {/* Main Content */}
+            <div className="space-y-12">
+                {/* Hero Section */}
+                <div className="relative -mx-8 -mt-8 px-8 py-16 mb-8 overflow-hidden">
+                    <div className="absolute inset-0 gradient-bg-animated opacity-10" />
+                    <div className="absolute top-10 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float" />
+                    <div className="absolute top-20 right-10 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float" style={{ animationDelay: '1s' }} />
+                    <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float" style={{ animationDelay: '2s' }} />
+                    <div className="relative text-center space-y-5">
+                        <h1 className="text-6xl font-bold tracking-tight">
+                            <span className="gradient-text">Interview Prep Vault</span>
+                        </h1>
+                        <p className="text-xl text-slate-600 max-w-2xl mx-auto font-medium">
+                            Master your coding interviews with our curated collection of problems and solutions.
+                        </p>
+                    </div>
+                </div>
+
+                {/* Search Bar */}
+                <div className="relative max-w-2xl mx-auto" ref={searchRef}>
+                    <div className="relative">
+                        <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 z-10" />
+                        <input
+                            type="text"
+                            placeholder="Search problems or tags..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            onFocus={() => setShowAutocomplete(true)}
+                            onKeyDown={handleKeyDown}
+                            className="w-full pl-14 pr-12 py-4 rounded-2xl glass-strong border-0 focus:shadow-glow outline-none transition-all duration-300 text-slate-700 placeholder-slate-500 text-lg font-medium"
+                        />
+                        {search && (
+                            <button
+                                onClick={handleClearSearch}
+                                className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition-all duration-200 hover:scale-110 z-10"
+                                aria-label="Clear search"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+                        )}
+                    </div>
+
+                    {/* Autocomplete */}
+                    {showAutocomplete && tagSuggestions.length > 0 && (
+                        <div className="absolute top-full mt-3 w-full glass-strong rounded-2xl shadow-premium max-h-80 overflow-y-auto z-20 border-0">
+                            <div className="p-3">
+                                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider px-4 py-2">
+                                    {search ? 'Matching Tags' : 'Available Tags'}
+                                </p>
+                                {tagSuggestions.map((tag, index) => (
+                                    <button
+                                        key={tag}
+                                        onClick={() => handleTagSelect(tag)}
+                                        onMouseEnter={() => setSelectedTagIndex(index)}
+                                        className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200 font-medium ${index === selectedTagIndex
+                                            ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-md scale-[1.02]'
+                                            : 'text-slate-700 hover:bg-white/60'}`}
+                                    >
+                                        <span className="flex items-center gap-3">
+                                            <span className={`inline-block w-2 h-2 rounded-full ${index === selectedTagIndex ? 'bg-white' : 'bg-blue-500'}`} />
+                                            {tag}
+                                        </span>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* Selected Tags */}
+                {selectedTags.length > 0 && (
+                    <div className="max-w-2xl mx-auto">
+                        <div className="flex flex-wrap items-center gap-3">
+                            <span className="text-sm font-bold text-slate-600 uppercase tracking-wide">Active Filters:</span>
+                            {selectedTags.map((tag) => (
+                                <span
                                     key={tag}
-                                    onClick={() => handleTagSelect(tag)}
-                                    onMouseEnter={() => setSelectedTagIndex(index)}
-                                    className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${index === selectedTagIndex
-                                        ? 'bg-blue-50 text-blue-700'
-                                        : 'text-slate-700 hover:bg-slate-50'
-                                        }`}
+                                    className="group inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl text-sm font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
                                 >
-                                    <span className="flex items-center">
-                                        <span className="inline-block w-2 h-2 rounded-full bg-slate-400 mr-2"></span>
-                                        {tag}
-                                    </span>
-                                </button>
+                                    {tag}
+                                    <button
+                                        onClick={() => handleRemoveTag(tag)}
+                                        className="hover:bg-white/20 rounded-full p-1 transition-all duration-200"
+                                        aria-label={`Remove ${tag} filter`}
+                                    >
+                                        <X className="w-3.5 h-3.5" />
+                                    </button>
+                                </span>
                             ))}
+                            <button
+                                onClick={handleClearAll}
+                                className="text-sm text-slate-500 hover:text-slate-800 font-semibold underline transition-colors duration-200"
+                            >
+                                Clear all
+                            </button>
                         </div>
                     </div>
                 )}
-            </div>
 
-            {/* Selected Tags as Chips */}
-            {selectedTags.length > 0 && (
-                <div className="max-w-xl mx-auto">
-                    <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-sm font-medium text-slate-600">Filters:</span>
-                        {selectedTags.map((tag) => (
-                            <span
-                                key={tag}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-200 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-300 transition-colors group"
-                            >
-                                {tag}
-                                <button
-                                    onClick={() => handleRemoveTag(tag)}
-                                    className="hover:bg-slate-400 rounded-full p-0.5 transition-colors"
-                                    aria-label={`Remove ${tag} filter`}
-                                >
-                                    <X className="w-3.5 h-3.5" />
-                                </button>
-                            </span>
-                        ))}
-                        <button
-                            onClick={handleClearAll}
-                            className="text-sm text-slate-500 hover:text-slate-700 underline transition-colors"
-                        >
-                            Clear all
-                        </button>
+                {/* Problem Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+                    {filteredProblems.map((problem) => (
+                        <ProblemCard key={problem.slug} problem={problem} />
+                    ))}
+                </div>
+
+                {/* Empty State */}
+                {filteredProblems.length === 0 && (
+                    <div className="text-center py-20">
+                        <div className="inline-block p-6 rounded-2xl glass-strong mb-4">
+                            <Search className="w-16 h-16 text-slate-400 mx-auto" />
+                        </div>
+                        <p className="text-xl font-semibold text-slate-600">No problems found</p>
+                        <p className="text-slate-500 mt-2">Try adjusting your search or filters</p>
                     </div>
-                </div>
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {filteredProblems.map((problem) => (
-                    <ProblemCard key={problem.slug} problem={problem} />
-                ))}
+                )}
             </div>
-
-            {filteredProblems.length === 0 && (
-                <div className="text-center py-12 text-slate-500">
-                    No problems found matching your search.
-                </div>
-            )}
         </div>
     );
 };
