@@ -5,7 +5,7 @@ import ProblemDetail from '@/pages/ProblemDetail';
 
 function App() {
   return (
-    <Router>
+    <Router basename="/interview-prep-vault">
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
