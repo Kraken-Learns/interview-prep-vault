@@ -1,92 +1,113 @@
 ---
-title: "Two Sum"
+title: "Two Sum in Sorted Array"
 difficulty: "Easy"
-tags: ["Array", "HashTable"]
+tags: ["Array", "Two Pointers"]
 date: "2023-10-27"
 source: "Hello interview"
 starterCode:
   python: |
-    def twoSum(nums: List[int], target: int) -> List[int]:
+    def twoSumSorted(nums: List[int], target: int) -> bool:
         # Write your code here
         pass
   cpp: |
     class Solution {
     public:
-        vector<int> twoSum(vector<int>& nums, int target) {
+        bool twoSumSorted(vector<int>& nums, int target) {
             // Write your code here
         }
     };
   java: |
     class Solution {
-        public int[] twoSum(int[] nums, int target) {
-            // Write your code here
+        public boolean twoSumSorted(int[] nums, int target) {
+            # Write your code here
         }
     }
   javascript: |
     /**
      * @param {number[]} nums
      * @param {number} target
-     * @return {number[]}
+     * @return {boolean}
      */
-    var twoSum = function(nums, target) {
+    var twoSumSorted = function(nums, target) {
         // Write your code here
     };
 ---
 
 ## Problem
-Given an array of integers `nums` and an integer `target`, return indices of the two numbers such that they add up to `target`.
+Given a **sorted** array of integers `nums` (in non-decreasing order) and an integer `target`, determine whether there exists a **pair of numbers** in the array whose sum equals `target`.
 
-You may assume that each input would have **exactly one solution**, and you may not use the same element twice.
-
-You can return the answer in any order.
+Return **true** if such a pair exists, otherwise return **false**.
 
 ## Test Cases
 
 **Example 1:**
-- **Input:** `nums = [2,7,11,15], target = 9`
-- **Output:** `[0,1]`
-- **Explanation:** Because nums[0] + nums[1] == 9, we return [0, 1].
+- **Input:** `nums = [1,2,3,4,6], target = 6`
+- **Output:** `true`
+- **Explanation:** `2 + 4 = 6`
 
 **Example 2:**
-- **Input:** `nums = [3,2,4], target = 6`
-- **Output:** `[1,2]`
+- **Input:** `nums = [1,1,3,4], target = 2`
+- **Output:** `true`
+- **Explanation:** `1 + 1 = 2`
 
 **Example 3:**
-- **Input:** `nums = [3,3], target = 6`
-- **Output:** `[0,1]`
+- **Input:** `nums = [1,2,5,9], target = 20`
+- **Output:** `false`
+- **Explanation:** No two numbers sum to 20
+
 
 ## Approach
-We can use a hash map to store the complement of the current number as we iterate through the array. If we find the complement in the map, we return the indices.
 
-## Solution
+Because the array is **sorted**, we use two pointers: one starting at the left (smallest value) and one at the right (largest value).
+
+**At each step:**
+
+- Compute the sum of the two pointed values.
+
+- If the sum equals the target, we've found a valid pair.
+
+- If the sum is **too small**, we move the **left** pointer right to increase the sum.
+
+- If the sum is **too large**, we move the **right** pointer left to reduce the sum.
+
+The pointers move toward each other, checking every meaningful pair without ever backtracking.
+
+**Time Complexity:** O(n)  
+**Space Complexity:** O(1)
+
+
+## Solutions
 
 ### Python
 ```python
-def twoSum(nums: List[int], target: int) -> List[int]:
-    prevMap = {}  # val -> index
+from typing import List
 
-    for i, n in enumerate(nums):
-        diff = target - n
-        if diff in prevMap:
-            return [prevMap[diff], i]
-        prevMap[n] = i
-    return []
+def twoSumSorted(nums: List[int], target: int) -> bool:
+    left, right = 0, len(nums) - 1
+    while left < right:
+        s = nums[left] + nums[right]
+        if s == target:
+            return True
+        if s < target:
+            left += 1
+        else:
+            right -= 1
+    return False
 ```
 
 ### C++
 ```cpp
 class Solution {
 public:
-    vector<int> twoSum(vector<int>& nums, int target) {
-        unordered_map<int, int> prevMap;
-        for (int i = 0; i < nums.size(); i++) {
-            int diff = target - nums[i];
-            if (prevMap.count(diff)) {
-                return {prevMap[diff], i};
-            }
-            prevMap[nums[i]] = i;
+    bool twoSumSorted(vector<int>& nums, int target) {
+        int left = 0, right = nums.size() - 1;
+        while (left < right) {
+            long long sum = (long long)nums[left] + nums[right];
+            if (sum == target) return true;
+            if (sum < target) left++;
+            else right--;
         }
-        return {};
+        return false;
     }
 };
 ```
@@ -94,36 +115,29 @@ public:
 ### Java
 ```java
 class Solution {
-    public int[] twoSum(int[] nums, int target) {
-        Map<Integer, Integer> prevMap = new HashMap<>();
-        for (int i = 0; i < nums.length; i++) {
-            int diff = target - nums[i];
-            if (prevMap.containsKey(diff)) {
-                return new int[]{prevMap.get(diff), i};
-            }
-            prevMap.put(nums[i], i);
+    public boolean twoSumSorted(int[] nums, int target) {
+        int left = 0, right = nums.length - 1;
+        while (left < right) {
+            long sum = (long) nums[left] + nums[right];
+            if (sum == target) return true;
+            if (sum < target) left++;
+            else right--;
         }
-        return new int[]{};
+        return false;
     }
 }
 ```
 
 ### JavaScript
 ```javascript
-/**
- * @param {number[]} nums
- * @param {number} target
- * @return {number[]}
- */
-var twoSum = function(nums, target) {
-    const prevMap = new Map();
-    for (let i = 0; i < nums.length; i++) {
-        const diff = target - nums[i];
-        if (prevMap.has(diff)) {
-            return [prevMap.get(diff), i];
-        }
-        prevMap.set(nums[i], i);
+var twoSumSorted = function(nums, target) {
+    let left = 0, right = nums.length - 1;
+    while (left < right) {
+        const sum = nums[left] + nums[right];
+        if (sum === target) return true;
+        if (sum < target) left++;
+        else right--;
     }
-    return [];
+    return false;
 };
 ```

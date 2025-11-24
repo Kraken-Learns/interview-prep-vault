@@ -200,7 +200,7 @@ const ProblemDetail: React.FC = () => {
 
                         {/* Problem Content */}
                         <div className="space-y-8">
-                            <section className="prose dark:prose-invert max-w-none">
+                            <section className="max-w-none">
                                 <div className="bg-white dark:bg-dark-layer1 rounded-2xl p-6 border border-black/5 dark:border-white/5 shadow-sm">
                                     <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                                         <div className="w-1 h-6 bg-primary rounded-full" />
@@ -312,9 +312,7 @@ const ProblemDetail: React.FC = () => {
                                             <span className="text-xs font-mono text-slate-500 uppercase">{selectedLanguage}</span>
                                         </div>
                                         <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
-                                            <div className="prose dark:prose-invert prose-sm max-w-none">
-                                                <MarkdownRenderer content={displayedSolution} />
-                                            </div>
+                                            <MarkdownRenderer content={displayedSolution} />
                                         </div>
                                     </div>
                                 )}

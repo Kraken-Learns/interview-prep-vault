@@ -2,6 +2,7 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import './MarkdownRenderer.css';
 
 interface MarkdownRendererProps {
     content: string;
@@ -9,13 +10,15 @@ interface MarkdownRendererProps {
 
 const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
     return (
-        <div className="prose dark:prose-invert prose-slate max-w-none 
-            prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-slate-900 dark:prose-headings:text-white
+        <div className="markdown-content prose dark:prose-invert prose-slate max-w-none 
+            prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-slate-900 dark:prose-headings:text-white prose-headings:!mt-8 prose-headings:!mb-4
             prose-a:text-primary prose-a:no-underline hover:prose-a:underline 
             prose-code:text-primary-dark dark:prose-code:text-primary-light prose-code:bg-black/5 dark:prose-code:bg-white/5 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:before:content-none prose-code:after:content-none 
             prose-strong:text-slate-900 dark:prose-strong:text-white 
-            prose-p:text-slate-600 dark:prose-p:text-slate-300 
-            prose-li:text-slate-600 dark:prose-li:text-slate-300">
+            prose-p:text-slate-600 dark:prose-p:text-slate-300 prose-p:!my-4 prose-p:!leading-relaxed
+            prose-li:text-slate-600 dark:prose-li:text-slate-300 prose-li:!my-2
+            prose-ul:!my-4 prose-ul:!space-y-2
+            [&>p]:!my-4 [&>ul]:!my-4 [&>ul>li]:!my-2 [&>*]:!block">
             <ReactMarkdown
                 components={{
                     code({ node, inline, className, children, ...props }: any) {

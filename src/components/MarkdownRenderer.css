@@ -1,0 +1,36 @@
+/* Force proper spacing for markdown elements */
+.markdown-content p {
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
+    line-height: 1.75 !important;
+}
+
+.markdown-content ul {
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
+}
+
+.markdown-content li {
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.markdown-content h2 {
+    margin-top: 2rem !important;
+    margin-bottom: 1rem !important;
+}
+
+.markdown-content h3 {
+    margin-top: 1.5rem !important;
+    margin-bottom: 0.75rem !important;
+}
+
+/* Add spacing between consecutive list items */
+.markdown-content ul>li+li {
+    margin-top: 0.75rem !important;
+}
+
+/* Ensure paragraphs don't collapse margins */
+.markdown-content>*+* {
+    margin-top: 1rem !important;
+}
