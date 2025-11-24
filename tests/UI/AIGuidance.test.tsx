@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import AIGuidance from '../../src/components/AIGuidance';
-import { Problem } from '../../src/types';
+import type { Problem } from '../../src/types';
 
 // Mock dependencies
 vi.mock('../../src/lib/ai-service', () => ({

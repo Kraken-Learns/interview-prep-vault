@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { logger } from '../../src/lib/logger';
-import { AIGuidanceSession } from '../../src/types';
+import type { AIGuidanceSession } from '../../src/types';
 
 describe('Logger Service', () => {
     beforeEach(() => {

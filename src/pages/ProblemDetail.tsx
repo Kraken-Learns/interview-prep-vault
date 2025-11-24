@@ -263,8 +263,8 @@ const ProblemDetail: React.FC = () => {
                     </div>
 
                     {/* Right Column: Code Editor */}
-                    <div className="flex flex-col gap-6 h-full overflow-hidden">
-                        <div className="flex-1 bg-[#1e1e1e] rounded-2xl border border-black/5 dark:border-white/5 shadow-2xl flex flex-col overflow-hidden">
+                    <div className="h-full overflow-hidden">
+                        <div className="h-full bg-[#1e1e1e] rounded-2xl border border-black/5 dark:border-white/5 shadow-2xl flex flex-col overflow-hidden">
                             {/* Editor Header */}
                             <div className="flex items-center justify-between p-4 border-b border-white/5 bg-[#252526]">
                                 <div className="flex items-center gap-3">
@@ -290,16 +290,38 @@ const ProblemDetail: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className="flex-1 relative">
-                                <CodeEditor
-                                    initialCode={userCode}
-                                    onChange={setUserCode}
-                                    language={selectedLanguage}
-                                />
+                            {/* Main Content Area (Editor + Solution) */}
+                            <div className="flex-1 flex flex-col min-h-0 relative">
+                                {/* Editor */}
+                                <div className={`${showSolution ? 'h-1/2 border-b border-white/5' : 'h-full'} relative transition-all duration-300`}>
+                                    <CodeEditor
+                                        initialCode={userCode}
+                                        onChange={setUserCode}
+                                        language={selectedLanguage}
+                                    />
+                                </div>
+
+                                {/* Solution View */}
+                                {showSolution && displayedSolution && (
+                                    <div className="h-1/2 flex flex-col bg-white dark:bg-dark-layer1 animate-fade-in">
+                                        <div className="flex items-center justify-between p-4 border-b border-black/5 dark:border-white/5 bg-slate-50 dark:bg-dark-layer2">
+                                            <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                                <Sparkles className="w-4 h-4 text-primary" />
+                                                Official Solution
+                                            </h3>
+                                            <span className="text-xs font-mono text-slate-500 uppercase">{selectedLanguage}</span>
+                                        </div>
+                                        <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+                                            <div className="prose dark:prose-invert prose-sm max-w-none">
+                                                <MarkdownRenderer content={displayedSolution} />
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Editor Actions */}
-                            <div className="p-4 border-t border-white/5 bg-[#252526] flex gap-3">
+                            <div className="p-4 border-t border-white/5 bg-[#252526] flex gap-3 z-10">
                                 <button
                                     onClick={handleToggleSolution}
                                     className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-[#1e1e1e] border border-white/10 text-slate-300 font-semibold rounded-xl hover:bg-white/5 hover:text-white transition-all"
@@ -316,24 +338,6 @@ const ProblemDetail: React.FC = () => {
                                 </button>
                             </div>
                         </div>
-
-                        {/* Solution View */}
-                        {showSolution && displayedSolution && (
-                            <div className="flex-1 bg-white dark:bg-dark-layer1 rounded-2xl border border-black/5 dark:border-white/5 shadow-2xl overflow-hidden flex flex-col animate-fade-in">
-                                <div className="flex items-center justify-between p-4 border-b border-black/5 dark:border-white/5 bg-slate-50 dark:bg-dark-layer2">
-                                    <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                                        <Sparkles className="w-4 h-4 text-primary" />
-                                        Official Solution
-                                    </h3>
-                                    <span className="text-xs font-mono text-slate-500 uppercase">{selectedLanguage}</span>
-                                </div>
-                                <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
-                                    <div className="prose dark:prose-invert prose-sm max-w-none">
-                                        <MarkdownRenderer content={displayedSolution} />
-                                    </div>
-                                </div>
-                            </div>
-                        )}
                     </div>
                 </div>
             </div>
