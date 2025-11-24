@@ -74,12 +74,13 @@ const AIGuidance: React.FC<AIGuidanceProps> = ({ problem, userCode, language, on
         }
     };
 
-    const handleSendMessage = async () => {
-        if (!input.trim() || !config) return;
+    const handleSendMessage = async (text?: string) => {
+        const messageText = text || input;
+        if (!messageText.trim() || !config) return;
 
         const newUserMessage: ChatMessage = {
             role: 'user',
-            content: input,
+            content: messageText,
             timestamp: Date.now()
         };
 
@@ -253,19 +254,25 @@ const AIGuidance: React.FC<AIGuidanceProps> = ({ problem, userCode, language, on
                             </p>
                             <div className="grid grid-cols-1 gap-2">
                                 <button
-                                    onClick={() => { setInput("Can you give me a hint?"); handleSendMessage(); }}
+                                    onClick={() => handleSendMessage("Can you give me a hint?")}
                                     className="text-sm text-left p-3 bg-white border border-slate-200 rounded-xl hover:border-blue-300 hover:shadow-md transition-all"
                                 >
                                     💡 Can you give me a hint?
                                 </button>
                                 <button
-                                    onClick={() => { setInput("What's wrong with my code?"); handleSendMessage(); }}
+                                    onClick={() => handleSendMessage("Please review my solution for correctness and time complexity.")}
+                                    className="text-sm text-left p-3 bg-white border border-slate-200 rounded-xl hover:border-blue-300 hover:shadow-md transition-all"
+                                >
+                                    ✅ Check my solution
+                                </button>
+                                <button
+                                    onClick={() => handleSendMessage("What's wrong with my code?")}
                                     className="text-sm text-left p-3 bg-white border border-slate-200 rounded-xl hover:border-blue-300 hover:shadow-md transition-all"
                                 >
                                     🐛 What's wrong with my code?
                                 </button>
                                 <button
-                                    onClick={() => { setInput("Explain the time complexity."); handleSendMessage(); }}
+                                    onClick={() => handleSendMessage("Explain the time complexity.")}
                                     className="text-sm text-left p-3 bg-white border border-slate-200 rounded-xl hover:border-blue-300 hover:shadow-md transition-all"
                                 >
                                     ⚡ Explain the time complexity
@@ -359,7 +366,7 @@ const AIGuidance: React.FC<AIGuidanceProps> = ({ problem, userCode, language, on
                             className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all disabled:opacity-50"
                         />
                         <button
-                            onClick={handleSendMessage}
+                            onClick={() => handleSendMessage()}
                             disabled={isLoading || !input.trim()}
                             className="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-blue-200"
                         >
