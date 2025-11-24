@@ -154,18 +154,19 @@ const Home: React.FC = () => {
     };
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-12">
             {/* Hero Section */}
-            <div className="relative -mt-8 px-4 md:px-8 py-8 overflow-hidden w-full">
-                <div className="absolute inset-0 gradient-bg-animated opacity-10" />
-                <div className="absolute top-10 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float" />
-                <div className="absolute top-20 right-10 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float" style={{ animationDelay: '1s' }} />
-                <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float" style={{ animationDelay: '2s' }} />
-                <div className="relative text-center space-y-5">
-                    <h1 className="text-4xl font-bold tracking-tight w-full text-center">
-                        <span className="gradient-text">{getHeroTitle()}</span>
+            <div className="relative -mt-8 px-4 md:px-8 py-16 overflow-hidden w-full">
+                <div className="absolute inset-0 bg-gradient-to-b from-primary/10 to-transparent opacity-50" />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-4xl bg-hero-glow opacity-20 blur-[100px] animate-pulse-slow" />
+
+                <div className="relative text-center space-y-6 max-w-3xl mx-auto">
+                    <h1 className="text-5xl md:text-7xl font-bold tracking-tight w-full text-center">
+                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-slate-700 to-slate-500 dark:from-white dark:via-slate-200 dark:to-slate-400 drop-shadow-lg">
+                            {getHeroTitle()}
+                        </span>
                     </h1>
-                    <p className="text-xl text-slate-600 w-full text-center font-medium">
+                    <p className="text-xl text-slate-600 dark:text-slate-400 w-full text-center font-medium leading-relaxed">
                         {getHeroDescription()}
                     </p>
                 </div>
@@ -175,9 +176,9 @@ const Home: React.FC = () => {
             <div className="flex flex-wrap justify-center gap-4">
                 <button
                     onClick={() => setActiveCategory('coding')}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${activeCategory === 'coding'
-                        ? 'bg-white text-purple-600 shadow-md ring-2 ring-purple-100'
-                        : 'text-slate-600 hover:bg-white/60 hover:text-slate-900'
+                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${activeCategory === 'coding'
+                        ? 'bg-primary text-white shadow-glow ring-2 ring-primary/50 scale-105'
+                        : 'text-slate-600 dark:text-slate-400 hover:bg-black/5 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
                         }`}
                 >
                     <Code2 className="w-5 h-5" />
@@ -185,9 +186,9 @@ const Home: React.FC = () => {
                 </button>
                 <button
                     onClick={() => setActiveCategory('system-design')}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${activeCategory === 'system-design'
-                        ? 'bg-white text-purple-600 shadow-md ring-2 ring-purple-100'
-                        : 'text-slate-600 hover:bg-white/60 hover:text-slate-900'
+                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${activeCategory === 'system-design'
+                        ? 'bg-primary text-white shadow-glow ring-2 ring-primary/50 scale-105'
+                        : 'text-slate-600 dark:text-slate-400 hover:bg-black/5 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
                         }`}
                 >
                     <Network className="w-5 h-5" />
@@ -195,9 +196,9 @@ const Home: React.FC = () => {
                 </button>
                 <button
                     onClick={() => setActiveCategory('library')}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${activeCategory === 'library'
-                        ? 'bg-white text-purple-600 shadow-md ring-2 ring-purple-100'
-                        : 'text-slate-600 hover:bg-white/60 hover:text-slate-900'
+                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${activeCategory === 'library'
+                        ? 'bg-primary text-white shadow-glow ring-2 ring-primary/50 scale-105'
+                        : 'text-slate-600 dark:text-slate-400 hover:bg-black/5 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
                         }`}
                 >
                     <Library className="w-5 h-5" />
@@ -207,7 +208,7 @@ const Home: React.FC = () => {
 
             {/* Content Area */}
             {activeCategory === 'coding' && (
-                <div className="flex flex-col lg:flex-row gap-6">
+                <div className="flex flex-col lg:flex-row gap-8">
                     {/* Sidebar */}
                     <aside className="hidden lg:block w-72 flex-shrink-0">
                         <TagSidebar
@@ -222,8 +223,8 @@ const Home: React.FC = () => {
                     <div className="flex-1 space-y-8">
                         {/* Search Bar */}
                         <div className="relative max-w-2xl mx-auto" ref={searchRef}>
-                            <div className="relative">
-                                <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 z-10" />
+                            <div className="relative group">
+                                <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-primary transition-colors z-10" />
                                 <input
                                     type="text"
                                     placeholder="Search problems or tags..."
@@ -231,12 +232,12 @@ const Home: React.FC = () => {
                                     onChange={(e) => setSearch(e.target.value)}
                                     onFocus={() => setShowAutocomplete(true)}
                                     onKeyDown={handleKeyDown}
-                                    className="w-full pl-14 pr-12 py-4 rounded-2xl glass-strong border-0 shadow-glow focus:shadow-glow outline-none transition-all duration-300 text-slate-700 placeholder-slate-500 text-lg font-medium"
+                                    className="w-full pl-14 pr-12 py-4 rounded-2xl bg-white dark:bg-dark-layer1 border border-black/10 dark:border-white/10 focus:border-primary/50 shadow-lg focus:shadow-glow outline-none transition-all duration-300 text-slate-900 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 text-lg font-medium"
                                 />
                                 {search && (
                                     <button
                                         onClick={handleClearSearch}
-                                        className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition-all duration-200 hover:scale-110 z-10"
+                                        className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-all duration-200 hover:scale-110 z-10"
                                         aria-label="Clear search"
                                     >
                                         <X className="w-5 h-5" />
@@ -246,26 +247,28 @@ const Home: React.FC = () => {
 
                             {/* Autocomplete */}
                             {showAutocomplete && tagSuggestions.length > 0 && (
-                                <div className="absolute top-full mt-3 w-full glass-strong rounded-2xl shadow-premium max-h-80 overflow-y-auto z-20 border-0">
-                                    <div className="p-3">
+                                <div className="absolute top-full mt-3 w-full glass-panel rounded-2xl overflow-hidden z-20 animate-fade-in">
+                                    <div className="p-2">
                                         <p className="text-xs font-bold text-slate-500 uppercase tracking-wider px-4 py-2">
                                             {search ? 'Matching Tags' : 'Available Tags'}
                                         </p>
-                                        {tagSuggestions.map((tag, index) => (
-                                            <button
-                                                key={tag}
-                                                onClick={() => handleTagSelect(tag)}
-                                                onMouseEnter={() => setSelectedTagIndex(index)}
-                                                className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200 font-medium ${index === selectedTagIndex
-                                                    ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-md scale-[1.02]'
-                                                    : 'text-slate-700 hover:bg-white/60'}`}
-                                            >
-                                                <span className="flex items-center gap-3">
-                                                    <span className={`inline-block w-2 h-2 rounded-full ${index === selectedTagIndex ? 'bg-white' : 'bg-blue-500'}`} />
-                                                    {tag}
-                                                </span>
-                                            </button>
-                                        ))}
+                                        <div className="max-h-64 overflow-y-auto custom-scrollbar">
+                                            {tagSuggestions.map((tag, index) => (
+                                                <button
+                                                    key={tag}
+                                                    onClick={() => handleTagSelect(tag)}
+                                                    onMouseEnter={() => setSelectedTagIndex(index)}
+                                                    className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200 font-medium ${index === selectedTagIndex
+                                                        ? 'bg-primary/20 text-primary-dark dark:text-white'
+                                                        : 'text-slate-600 dark:text-slate-400 hover:bg-black/5 dark:hover:bg-white/5'}`}
+                                                >
+                                                    <span className="flex items-center gap-3">
+                                                        <span className={`inline-block w-2 h-2 rounded-full ${index === selectedTagIndex ? 'bg-primary' : 'bg-slate-400 dark:bg-slate-600'}`} />
+                                                        {tag}
+                                                    </span>
+                                                </button>
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -275,16 +278,16 @@ const Home: React.FC = () => {
                         {selectedTags.length > 0 && (
                             <div className="max-w-2xl mx-auto">
                                 <div className="flex flex-wrap items-center gap-3">
-                                    <span className="text-sm font-bold text-slate-600 uppercase tracking-wide">Active Filters:</span>
+                                    <span className="text-sm font-bold text-slate-500 uppercase tracking-wide">Filters:</span>
                                     {selectedTags.map((tag) => (
                                         <span
                                             key={tag}
-                                            className="group inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl text-sm font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
+                                            className="group inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 text-primary-light rounded-xl text-sm font-semibold shadow-sm hover:shadow-glow hover:border-primary/50 transition-all duration-200"
                                         >
                                             {tag}
                                             <button
                                                 onClick={() => handleRemoveTag(tag)}
-                                                className="hover:bg-white/20 rounded-full p-1 transition-all duration-200"
+                                                className="hover:bg-primary/20 rounded-full p-1 transition-all duration-200"
                                                 aria-label={`Remove ${tag} filter`}
                                             >
                                                 <X className="w-3.5 h-3.5" />
@@ -293,7 +296,7 @@ const Home: React.FC = () => {
                                     ))}
                                     <button
                                         onClick={handleClearAll}
-                                        className="text-sm text-slate-500 hover:text-slate-800 font-semibold underline transition-colors duration-200"
+                                        className="text-sm text-slate-500 hover:text-white font-semibold underline transition-colors duration-200"
                                     >
                                         Clear all
                                     </button>
@@ -302,7 +305,7 @@ const Home: React.FC = () => {
                         )}
 
                         {/* Problem Cards */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {filteredProblems.map((problem) => (
                                 <ProblemCard key={problem.slug} problem={problem} />
                             ))}
@@ -311,10 +314,10 @@ const Home: React.FC = () => {
                         {/* Empty State */}
                         {filteredProblems.length === 0 && (
                             <div className="text-center py-20">
-                                <div className="inline-block p-6 rounded-2xl glass-strong mb-4">
-                                    <Search className="w-16 h-16 text-slate-400 mx-auto" />
+                                <div className="inline-block p-6 rounded-2xl bg-white/5 mb-4">
+                                    <Search className="w-16 h-16 text-slate-600 mx-auto" />
                                 </div>
-                                <p className="text-xl font-semibold text-slate-600">No problems found</p>
+                                <p className="text-xl font-semibold text-slate-400">No problems found</p>
                                 <p className="text-slate-500 mt-2">Try adjusting your search or filters</p>
                             </div>
                         )}
@@ -328,10 +331,10 @@ const Home: React.FC = () => {
 
             {activeCategory === 'library' && (
                 <div className="text-center py-20">
-                    <div className="inline-block p-6 rounded-2xl glass-strong mb-4">
-                        <Library className="w-16 h-16 text-slate-400 mx-auto" />
+                    <div className="inline-block p-6 rounded-2xl bg-white/5 mb-4">
+                        <Library className="w-16 h-16 text-slate-600 mx-auto" />
                     </div>
-                    <p className="text-xl font-semibold text-slate-600">Library Coming Soon</p>
+                    <p className="text-xl font-semibold text-slate-400">Library Coming Soon</p>
                     <p className="text-slate-500 mt-2">We are curating the best resources for you.</p>
                 </div>
             )}

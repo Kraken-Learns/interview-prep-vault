@@ -1,5 +1,6 @@
 import React from 'react';
 import Editor from '@monaco-editor/react';
+import { useTheme } from '@/context/ThemeContext';
 
 interface CodeEditorProps {
     initialCode?: string;
@@ -14,48 +15,26 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     readOnly = false,
     language = 'python'
 }) => {
+    const { theme } = useTheme();
+
     const handleEditorChange = (value: string | undefined) => {
         if (value !== undefined && onChange) {
             onChange(value);
         }
     };
 
-    const getExtension = (lang: string) => {
-        switch (lang) {
-            case 'python': return 'py';
-            case 'cpp': return 'cpp';
-            case 'java': return 'java';
-            case 'javascript': return 'js';
-            default: return 'txt';
-        }
-    };
-
     return (
-        <div className="rounded-xl overflow-hidden border border-slate-700 shadow-2xl">
-            {/* Editor Header */}
-            <div className="flex items-center justify-between px-4 py-2 bg-[#2d2d30] border-b border-slate-700">
-                <div className="flex items-center gap-2">
-                    <div className="flex gap-1.5">
-                        <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                        <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                        <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                    </div>
-                    <span className="ml-3 text-xs text-slate-400 font-mono">solution.{getExtension(language)}</span>
-                </div>
-                <span className="text-xs text-slate-400 uppercase">{language}</span>
-            </div>
-
-            {/* Monaco Editor */}
+        <div className="h-full w-full rounded-xl overflow-hidden border border-slate-200 dark:border-white/5 bg-white dark:bg-[#1e1e1e] shadow-inner">
             <Editor
-                height="400px"
+                height="100%"
                 language={language}
                 value={initialCode}
                 onChange={handleEditorChange}
-                theme="vs-dark"
+                theme={theme === 'dark' ? 'vs-dark' : 'light'}
                 options={{
                     minimap: { enabled: false },
                     fontSize: 14,
-                    fontFamily: "'Fira Code', 'Consolas', monospace",
+                    fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
                     lineNumbers: 'on',
                     scrollBeyondLastLine: false,
                     automaticLayout: true,
@@ -63,13 +42,13 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
                     insertSpaces: true,
                     wordWrap: 'on',
                     readOnly: readOnly,
-                    padding: { top: 16, bottom: 16 },
+                    padding: { top: 20, bottom: 20 },
                     renderLineHighlight: 'all',
                     cursorBlinking: 'smooth',
                     smoothScrolling: true,
                     contextmenu: true,
                     folding: true,
-                    lineDecorationsWidth: 10,
+                    lineDecorationsWidth: 20,
                     lineNumbersMinChars: 3,
                     glyphMargin: false,
                     renderWhitespace: 'selection',
@@ -80,15 +59,13 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
                         indentation: true,
                         bracketPairs: true,
                     },
-                    suggest: {
-                        showKeywords: true,
-                        showSnippets: true,
-                    },
-                    quickSuggestions: {
-                        other: true,
-                        comments: false,
-                        strings: false,
-                    },
+                    scrollbar: {
+                        vertical: 'visible',
+                        horizontal: 'visible',
+                        verticalScrollbarSize: 10,
+                        horizontalScrollbarSize: 10,
+                        useShadows: false,
+                    }
                 }}
             />
         </div>

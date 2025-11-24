@@ -33,14 +33,14 @@ const TagSidebar: React.FC<TagSidebarProps> = ({
     };
 
     return (
-        <div className="space-y-6 sticky top-6">
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+        <div className="space-y-6 sticky top-24">
+            <div className="bg-white dark:bg-dark-layer1 rounded-xl border border-slate-200 dark:border-white/5 p-6 shadow-lg">
                 <div className="flex items-center gap-2 mb-4">
-                    <Filter className="w-5 h-5 text-slate-600" />
-                    <h2 className="text-lg font-semibold text-slate-900">Filter by Tags</h2>
+                    <Filter className="w-5 h-5 text-primary" />
+                    <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-200">Filter by Tags</h2>
                 </div>
 
-                <div className="space-y-2 max-h-[calc(100vh-400px)] overflow-y-auto pr-2 custom-scrollbar">
+                <div className="space-y-1 max-h-[calc(100vh-400px)] overflow-y-auto pr-2 custom-scrollbar">
                     {allTags.map((tag) => {
                         const isSelected = selectedTags.some(
                             selected => selected.toLowerCase() === tag.toLowerCase()
@@ -51,8 +51,8 @@ const TagSidebar: React.FC<TagSidebarProps> = ({
                             <label
                                 key={tag}
                                 className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 ${isSelected
-                                    ? 'bg-blue-50 border border-blue-200'
-                                    : 'hover:bg-slate-50 border border-transparent'
+                                    ? 'bg-primary/10 border border-primary/20'
+                                    : 'hover:bg-slate-100 dark:hover:bg-white/5 border border-transparent'
                                     }`}
                             >
                                 <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -60,10 +60,10 @@ const TagSidebar: React.FC<TagSidebarProps> = ({
                                         type="checkbox"
                                         checked={isSelected}
                                         onChange={() => onTagToggle(tag)}
-                                        className="w-4 h-4 text-blue-600 bg-white border-slate-300 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                                        className="w-4 h-4 text-primary bg-slate-100 dark:bg-dark-bg border-slate-300 dark:border-slate-600 rounded focus:ring-offset-white dark:focus:ring-offset-dark-bg focus:ring-primary cursor-pointer"
                                     />
                                     <span
-                                        className={`text-sm font-medium truncate ${isSelected ? 'text-blue-700' : 'text-slate-700'
+                                        className={`text-sm font-medium truncate ${isSelected ? 'text-primary-dark dark:text-primary-light' : 'text-slate-600 dark:text-slate-400'
                                             }`}
                                         title={tag}
                                     >
@@ -72,8 +72,8 @@ const TagSidebar: React.FC<TagSidebarProps> = ({
                                 </div>
                                 <span
                                     className={`text-xs font-medium ml-2 px-2 py-0.5 rounded-full ${isSelected
-                                        ? 'bg-blue-100 text-blue-700'
-                                        : 'bg-slate-100 text-slate-500'
+                                        ? 'bg-primary/20 text-primary-dark dark:text-primary'
+                                        : 'bg-slate-100 dark:bg-white/5 text-slate-500'
                                         }`}
                                 >
                                     {count}
@@ -84,10 +84,10 @@ const TagSidebar: React.FC<TagSidebarProps> = ({
                 </div>
 
                 {selectedTags.length > 0 && (
-                    <div className="mt-4 pt-4 border-t border-slate-200">
+                    <div className="mt-4 pt-4 border-t border-slate-200 dark:border-white/5">
                         <button
                             onClick={() => selectedTags.forEach(tag => onTagToggle(tag))}
-                            className="w-full text-sm text-slate-600 hover:text-slate-900 font-medium transition-colors"
+                            className="w-full text-sm text-slate-500 hover:text-slate-900 dark:hover:text-white font-medium transition-colors"
                         >
                             Clear all filters ({selectedTags.length})
                         </button>

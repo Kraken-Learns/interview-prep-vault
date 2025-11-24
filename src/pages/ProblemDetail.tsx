@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { ArrowLeft, ChevronDown, ChevronUp, Eye, EyeOff, Bot, Sparkles } from 'lucide-react';
+import confetti from 'canvas-confetti';
 import { getProblem } from '@/lib/problems';
 import type { Problem } from '@/types';
+import { useProgress } from '@/context/ProgressContext';
 import MarkdownRenderer from '@/components/MarkdownRenderer';
 import CodeEditor from '@/components/CodeEditor';
-import { useProgress } from '@/context/ProgressContext';
-import { ArrowLeft, Tag, ChevronDown, ChevronUp, Eye, EyeOff, Code2, TestTube, Lightbulb, Sparkles, CheckCircle, Circle, Bot } from 'lucide-react';
-import confetti from 'canvas-confetti';
 import AIGuidance from '@/components/AIGuidance';
 
 const ProblemDetail: React.FC = () => {
@@ -128,256 +128,213 @@ const ProblemDetail: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-16">
+        <div className="min-h-screen bg-white dark:bg-dark-bg pb-20 transition-colors duration-300">
+            {/* Background Effects */}
+            <div className="fixed inset-0 pointer-events-none">
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px]" />
+                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-accent-blue/5 rounded-full blur-[120px]" />
+            </div>
+
+            <div className="relative max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
                 {/* Back Button */}
                 <Link
                     to="/"
-                    className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900 mb-10 transition-all group"
+                    className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white mb-8 transition-colors group"
                 >
                     <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                     <span>Back to Problems</span>
                 </Link>
 
-                <div className="space-y-8">
-                    {/* Title and Tags - Hero Section */}
-                    <div className="relative bg-gradient-to-br from-white to-slate-50/50 rounded-3xl p-6 md:p-10 border border-slate-200/60 shadow-xl shadow-slate-200/50 overflow-hidden">
-                        {/* Decorative gradient orb */}
-                        <div className="absolute -top-20 -right-20 w-48 h-48 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
-                        <div className="absolute -bottom-20 -left-20 w-48 h-48 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-3xl"></div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-[calc(100vh-8rem)]">
+                    {/* Left Column: Problem Description */}
+                    <div className="space-y-6 overflow-y-auto custom-scrollbar pr-2 pb-20">
+                        {/* Title Card */}
+                        <div className="relative bg-white dark:bg-dark-layer1 rounded-2xl p-8 border border-black/5 dark:border-white/5 shadow-lg overflow-hidden group">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-colors duration-500" />
 
-                        <div className="relative">
-                            <div className="flex flex-col md:flex-row items-start justify-between gap-4 mb-6">
-                                <h1 className="text-3xl md:text-5xl font-bold text-slate-900 tracking-tight leading-tight pr-4">
-                                    {problem.title}
-                                </h1>
-                                <div className="flex items-center gap-3">
+                            <div className="relative z-10">
+                                <div className="flex flex-col gap-4 mb-6">
+                                    <div className="flex items-start justify-between gap-4">
+                                        <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white tracking-tight leading-tight">
+                                            {problem.title}
+                                        </h1>
+                                        <button
+                                            onClick={handleToggleCompletion}
+                                            className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-300 ${isCompleted
+                                                ? 'bg-green-500/20 text-green-600 dark:text-green-400 border border-green-500/50'
+                                                : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 border border-black/5 dark:border-white/10 hover:bg-green-500/10 hover:text-green-600 dark:hover:text-green-400 hover:border-green-500/30'
+                                                }`}
+                                        >
+                                            {isCompleted ? (
+                                                <>
+                                                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                                                    <span>Solved</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <div className="w-2 h-2 rounded-full bg-slate-400 dark:bg-slate-500 group-hover:bg-green-500 transition-colors" />
+                                                    <span>Mark Solved</span>
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
+
+                                    <div className="flex flex-wrap gap-2">
+                                        <div className={`px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider border ${problem.difficulty === 'Hard'
+                                            ? 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20'
+                                            : problem.difficulty === 'Medium'
+                                                ? 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20'
+                                                : 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20'
+                                            }`}>
+                                            {problem.difficulty}
+                                        </div>
+                                        {problem.tags.map(tag => (
+                                            <span key={tag} className="px-3 py-1 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 text-xs font-medium border border-black/5 dark:border-white/10">
+                                                {tag}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Problem Content */}
+                        <div className="space-y-8">
+                            <section className="prose dark:prose-invert max-w-none">
+                                <div className="bg-white dark:bg-dark-layer1 rounded-2xl p-6 border border-black/5 dark:border-white/5 shadow-sm">
+                                    <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                                        <div className="w-1 h-6 bg-primary rounded-full" />
+                                        Problem Description
+                                    </h2>
+                                    <MarkdownRenderer content={problemSection.replace('## Problem', '')} />
+                                </div>
+                            </section>
+
+                            {testCasesSection && (
+                                <section className="bg-white dark:bg-dark-layer1 rounded-2xl p-6 border border-black/5 dark:border-white/5 shadow-sm">
+                                    <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                                        <div className="w-1 h-6 bg-accent-blue rounded-full" />
+                                        Test Cases
+                                    </h2>
+                                    <MarkdownRenderer content={testCasesSection.replace('## Test Cases', '')} />
+                                </section>
+                            )}
+
+                            {hintsSection && (
+                                <section className="bg-white dark:bg-dark-layer1 rounded-2xl border border-black/5 dark:border-white/5 shadow-sm overflow-hidden">
                                     <button
-                                        onClick={handleToggleCompletion}
-                                        className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-300 shadow-md hover:scale-105 active:scale-95 ${isCompleted
-                                            ? 'bg-green-500 text-white hover:bg-green-600 shadow-green-200'
-                                            : 'bg-white text-slate-500 hover:text-slate-700 border-2 border-slate-200 hover:border-slate-300'
-                                            }`}
+                                        onClick={() => setShowHint(!showHint)}
+                                        className="w-full flex items-center justify-between p-6 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
                                     >
-                                        {isCompleted ? <CheckCircle className="w-5 h-5" /> : <Circle className="w-5 h-5" />}
-                                        <span>{isCompleted ? 'Completed' : 'Mark Complete'}</span>
+                                        <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                            <div className="w-1 h-6 bg-yellow-500 rounded-full" />
+                                            Hints
+                                        </h2>
+                                        {showHint ? <ChevronUp className="w-5 h-5 text-slate-500" /> : <ChevronDown className="w-5 h-5 text-slate-500" />}
                                     </button>
-                                    <Sparkles className="w-8 h-8 text-purple-500 flex-shrink-0 mt-1" />
-                                </div>
-                            </div>
+                                    {showHint && (
+                                        <div className="p-6 pt-0 border-t border-black/5 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02]">
+                                            <MarkdownRenderer content={hintsSection.replace('## Hints', '')} />
+                                        </div>
+                                    )}
+                                </section>
+                            )}
 
-                            {/* Elegant divider */}
-                            <div className="h-px bg-gradient-to-r from-slate-200 via-slate-300 to-transparent mb-6"></div>
-
-                            <div className="flex flex-wrap gap-3">
-                                <span className={`inline-flex items-center px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition-transform hover:scale-105 ${problem.difficulty === 'Easy'
-                                    ? 'bg-gradient-to-br from-green-50 to-emerald-50 text-green-700 border-2 border-green-200' :
-                                    problem.difficulty === 'Medium'
-                                        ? 'bg-gradient-to-br from-yellow-50 to-amber-50 text-yellow-700 border-2 border-yellow-200' :
-                                        'bg-gradient-to-br from-red-50 to-rose-50 text-red-700 border-2 border-red-200'
-                                    }`}>
-                                    {problem.difficulty}
-                                </span>
-                                <span className="inline-flex items-center gap-2 text-slate-700 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-xl border-2 border-slate-200 shadow-sm">
-                                    <Tag className="w-4 h-4 text-slate-500" />
-                                    <span className="font-medium">{problem.tags.join(', ')}</span>
-                                </span>
-                            </div>
+                            {approachSection && (
+                                <section className="bg-white dark:bg-dark-layer1 rounded-2xl border border-black/5 dark:border-white/5 shadow-sm overflow-hidden">
+                                    <button
+                                        onClick={() => setApproachExpanded(!approachExpanded)}
+                                        className="w-full flex items-center justify-between p-6 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+                                    >
+                                        <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                            <div className="w-1 h-6 bg-purple-500 rounded-full" />
+                                            Approach & Strategy
+                                        </h2>
+                                        {approachExpanded ? <ChevronUp className="w-5 h-5 text-slate-500" /> : <ChevronDown className="w-5 h-5 text-slate-500" />}
+                                    </button>
+                                    {approachExpanded && (
+                                        <div className="p-6 pt-0 border-t border-black/5 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02]">
+                                            <MarkdownRenderer content={approachSection.replace('## Approach', '')} />
+                                        </div>
+                                    )}
+                                </section>
+                            )}
                         </div>
                     </div>
 
-                    {/* Problem Statement */}
-                    {problemSection && (
-                        <div className="bg-white rounded-3xl p-6 md:p-10 border border-slate-200/60 shadow-lg hover:shadow-xl transition-all duration-300">
-                            <div className="flex items-center gap-3 mb-6">
-                                <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg">
-                                    <Code2 className="w-5 h-5 text-white" />
+                    {/* Right Column: Code Editor */}
+                    <div className="flex flex-col gap-6 h-full overflow-hidden">
+                        <div className="flex-1 bg-[#1e1e1e] rounded-2xl border border-black/5 dark:border-white/5 shadow-2xl flex flex-col overflow-hidden">
+                            {/* Editor Header */}
+                            <div className="flex items-center justify-between p-4 border-b border-white/5 bg-[#252526]">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex gap-1.5">
+                                        <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50" />
+                                        <div className="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50" />
+                                        <div className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50" />
+                                    </div>
+                                    <span className="text-sm font-medium text-slate-400 ml-2">Solution Editor</span>
                                 </div>
-                                <h2 className="text-2xl font-bold text-slate-900">Problem</h2>
-                            </div>
-
-                            {/* Subtle gradient divider */}
-                            <div className="h-px bg-gradient-to-r from-blue-200 via-blue-100 to-transparent mb-8"></div>
-
-                            <div className="prose prose-slate prose-lg max-w-none">
-                                <MarkdownRenderer content={problemSection.replace('## Problem', '')} />
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Test Cases */}
-                    {testCasesSection && (
-                        <div className="bg-white rounded-3xl p-6 md:p-10 border border-slate-200/60 shadow-lg hover:shadow-xl transition-all duration-300">
-                            <div className="flex items-center gap-3 mb-6">
-                                <div className="p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg">
-                                    <TestTube className="w-5 h-5 text-white" />
+                                <div className="relative">
+                                    <select
+                                        value={selectedLanguage}
+                                        onChange={(e) => setSelectedLanguage(e.target.value)}
+                                        className="appearance-none bg-[#1e1e1e] border border-white/10 text-slate-300 py-1.5 pl-3 pr-8 rounded-lg text-sm font-medium focus:outline-none focus:border-primary hover:border-white/20 transition-colors cursor-pointer"
+                                    >
+                                        <option value="python">Python</option>
+                                        <option value="cpp">C++</option>
+                                        <option value="java">Java</option>
+                                        <option value="javascript">JavaScript</option>
+                                    </select>
+                                    <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500 pointer-events-none" />
                                 </div>
-                                <h2 className="text-2xl font-bold text-slate-900">Test Cases</h2>
                             </div>
 
-                            {/* Subtle gradient divider */}
-                            <div className="h-px bg-gradient-to-r from-purple-200 via-purple-100 to-transparent mb-8"></div>
-
-                            <div className="prose prose-slate prose-lg max-w-none">
-                                <MarkdownRenderer content={testCasesSection.replace('## Test Cases', '')} />
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Code Editor */}
-                    <div className="bg-gradient-to-br from-white to-slate-50/50 rounded-3xl p-4 md:p-10 border border-slate-200/60 shadow-xl">
-                        <div className="flex items-center justify-between mb-8">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl shadow-lg">
-                                    <Code2 className="w-5 h-5 text-white" />
-                                </div>
-                                <h2 className="text-2xl font-bold text-slate-900">Your Solution</h2>
+                            <div className="flex-1 relative">
+                                <CodeEditor
+                                    initialCode={userCode}
+                                    onChange={setUserCode}
+                                    language={selectedLanguage}
+                                />
                             </div>
 
-                            {/* Language Selector */}
-                            <div className="relative">
-                                <select
-                                    value={selectedLanguage}
-                                    onChange={(e) => setSelectedLanguage(e.target.value)}
-                                    className="appearance-none bg-white border border-slate-200 text-slate-700 py-2 pl-4 pr-10 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-sm cursor-pointer hover:border-slate-300 transition-all"
+                            {/* Editor Actions */}
+                            <div className="p-4 border-t border-white/5 bg-[#252526] flex gap-3">
+                                <button
+                                    onClick={handleToggleSolution}
+                                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-[#1e1e1e] border border-white/10 text-slate-300 font-semibold rounded-xl hover:bg-white/5 hover:text-white transition-all"
                                 >
-                                    <option value="python">Python</option>
-                                    <option value="cpp">C++</option>
-                                    <option value="java">Java</option>
-                                    <option value="javascript">JavaScript</option>
-                                </select>
-                                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                                    {showSolution ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                    <span>{showSolution ? 'Hide Solution' : 'View Solution'}</span>
+                                </button>
+                                <button
+                                    onClick={() => setShowAIGuidance(true)}
+                                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary-dark transition-all shadow-glow hover:shadow-glow-strong"
+                                >
+                                    <Bot className="w-4 h-4" />
+                                    <span>AI Guidance</span>
+                                </button>
                             </div>
                         </div>
 
-                        {/* Subtle gradient divider */}
-                        <div className="h-px bg-gradient-to-r from-emerald-200 via-emerald-100 to-transparent mb-8"></div>
-
-                        <CodeEditor
-                            initialCode={userCode}
-                            onChange={setUserCode}
-                            language={selectedLanguage}
-                        />
-
-                        {/* Action Button */}
-                        <div className="flex gap-4 mt-8 pt-8 border-t border-slate-200">
-                            <button
-                                onClick={handleToggleSolution}
-                                className="flex-1 flex items-center justify-center gap-3 px-8 py-4 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-2xl hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm hover:shadow-md"
-                            >
-                                {showSolution ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                                <span>{showSolution ? 'Hide Solution' : 'View Solution'}</span>
-                            </button>
-                            <button
-                                onClick={() => setShowAIGuidance(true)}
-                                className="flex-1 flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-2xl hover:from-purple-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-2xl hover:scale-105 active:scale-100"
-                            >
-                                <Bot className="w-5 h-5" />
-                                <span>AI Guidance</span>
-                            </button>
-                        </div>
+                        {/* Solution View */}
+                        {showSolution && displayedSolution && (
+                            <div className="flex-1 bg-white dark:bg-dark-layer1 rounded-2xl border border-black/5 dark:border-white/5 shadow-2xl overflow-hidden flex flex-col animate-fade-in">
+                                <div className="flex items-center justify-between p-4 border-b border-black/5 dark:border-white/5 bg-slate-50 dark:bg-dark-layer2">
+                                    <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                        <Sparkles className="w-4 h-4 text-primary" />
+                                        Official Solution
+                                    </h3>
+                                    <span className="text-xs font-mono text-slate-500 uppercase">{selectedLanguage}</span>
+                                </div>
+                                <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+                                    <div className="prose dark:prose-invert prose-sm max-w-none">
+                                        <MarkdownRenderer content={displayedSolution} />
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
-
-                    {/* Solution Display - View Mode */}
-                    {showSolution && displayedSolution && (
-                        <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl p-6 md:p-10 border border-slate-700 shadow-2xl overflow-hidden">
-                            {/* Animated gradient top border */}
-                            <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 animate-pulse"></div>
-
-                            {/* Decorative gradient orbs */}
-                            <div className="absolute top-10 right-10 w-32 h-32 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full blur-3xl"></div>
-                            <div className="absolute bottom-10 left-10 w-32 h-32 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl"></div>
-
-                            <div className="relative">
-                                <div className="flex items-center gap-4 mb-8">
-                                    <div className="h-12 w-1.5 bg-gradient-to-b from-green-400 to-emerald-500 rounded-full shadow-lg shadow-green-500/50"></div>
-                                    <h2 className="text-3xl font-bold text-white">Official Solution ({selectedLanguage})</h2>
-                                    <div className="ml-auto">
-                                        <Sparkles className="w-6 h-6 text-purple-400" />
-                                    </div>
-                                </div>
-
-                                {/* Elegant divider */}
-                                <div className="h-px bg-gradient-to-r from-slate-700 via-slate-600 to-transparent mb-8"></div>
-
-                                <div className="prose prose-invert prose-lg max-w-none">
-                                    <MarkdownRenderer content={displayedSolution} />
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Hints */}
-                    {hintsSection && (
-                        <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl border border-amber-200/60 shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
-                            <button
-                                onClick={() => setShowHint(!showHint)}
-                                className="w-full flex items-center justify-between p-6 md:p-10 text-left hover:bg-white/40 transition-all duration-300 group"
-                            >
-                                <div className="flex items-center gap-4">
-                                    <div className="p-2 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl shadow-lg">
-                                        <Lightbulb className="w-5 h-5 text-white" />
-                                    </div>
-                                    <h2 className="text-2xl font-bold text-slate-900">Need a Hint?</h2>
-                                </div>
-                                <div className={`p-2 rounded-xl transition-all duration-300 ${showHint ? 'bg-amber-200/50' : 'bg-amber-100/50 group-hover:bg-amber-200/50'}`}>
-                                    {showHint ? (
-                                        <ChevronUp className="w-6 h-6 text-amber-700" />
-                                    ) : (
-                                        <ChevronDown className="w-6 h-6 text-amber-700" />
-                                    )}
-                                </div>
-                            </button>
-
-                            {showHint && (
-                                <div className="px-6 md:px-10 pb-6 md:pb-10">
-                                    <div className="h-px bg-gradient-to-r from-amber-200 via-orange-100 to-transparent mb-8"></div>
-                                    <div className="prose prose-slate prose-lg max-w-none">
-                                        <MarkdownRenderer content={hintsSection.replace('## Hints', '')} />
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    )}
-
-                    {/* Approach - Collapsible */}
-                    {approachSection && (
-                        <div className="bg-white rounded-3xl border border-slate-200/60 shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
-                            <button
-                                onClick={() => setApproachExpanded(!approachExpanded)}
-                                className="w-full flex items-center justify-between p-6 md:p-10 text-left hover:bg-gradient-to-r hover:from-slate-50 hover:to-blue-50/30 transition-all duration-300 group"
-                            >
-                                <div className="flex items-center gap-4">
-                                    <div className={`p-2 bg-gradient-to-br rounded-xl shadow-lg transition-all duration-300 ${approachExpanded
-                                        ? 'from-orange-500 to-amber-600'
-                                        : 'from-blue-500 to-indigo-600'
-                                        }`}>
-                                        <Lightbulb className="w-5 h-5 text-white" />
-                                    </div>
-                                    <h2 className="text-2xl font-bold text-slate-900">Approach & Strategy</h2>
-                                </div>
-                                <div className={`p-2 rounded-xl transition-all duration-300 ${approachExpanded ? 'bg-slate-100' : 'bg-slate-50 group-hover:bg-slate-100'
-                                    }`}>
-                                    {approachExpanded ? (
-                                        <ChevronUp className="w-6 h-6 text-slate-600" />
-                                    ) : (
-                                        <ChevronDown className="w-6 h-6 text-slate-600" />
-                                    )}
-                                </div>
-                            </button>
-
-                            {approachExpanded && (
-                                <div className="px-6 md:px-10 pb-6 md:pb-10">
-                                    {/* Gradient divider */}
-                                    <div className="h-px bg-gradient-to-r from-orange-200 via-amber-100 to-transparent mb-8"></div>
-
-                                    <div className="prose prose-slate prose-lg max-w-none">
-                                        <MarkdownRenderer content={approachSection.replace('## Approach', '')} />
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    )}
                 </div>
             </div>
 

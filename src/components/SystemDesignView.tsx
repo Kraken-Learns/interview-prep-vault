@@ -54,8 +54,8 @@ const SystemDesignView: React.FC = () => {
                             key={topic.id}
                             onClick={() => setSelectedTopicId(topic.id)}
                             className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200 font-medium ${selectedTopicId === topic.id
-                                ? 'bg-purple-100 text-purple-700 shadow-sm'
-                                : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                                ? 'bg-primary/10 text-primary shadow-glow border border-primary/20'
+                                : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'
                                 }`}
                         >
                             {topic.title}
@@ -66,7 +66,7 @@ const SystemDesignView: React.FC = () => {
 
             {/* Content */}
             <main className="flex-1 min-w-0">
-                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
+                <div className="bg-dark-layer1 rounded-2xl shadow-lg border border-white/5 p-8">
                     <MarkdownRenderer content={selectedTopic.content} />
                 </div>
             </main>
