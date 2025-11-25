@@ -17,6 +17,7 @@ const ProblemDetail: React.FC = () => {
     const [userCode, setUserCode] = useState('');
     const [showSolution, setShowSolution] = useState(false);
     const [approachExpanded, setApproachExpanded] = useState(false);
+    const [showTestCases, setShowTestCases] = useState(false);
     const [showHint, setShowHint] = useState(false);
     const [showAIGuidance, setShowAIGuidance] = useState(false);
     const { isProblemCompleted, toggleProblemCompletion } = useProgress();
@@ -145,126 +146,136 @@ const ProblemDetail: React.FC = () => {
                     <span>Back to Problems</span>
                 </Link>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-[calc(100vh-8rem)]">
-                    {/* Left Column: Problem Description */}
-                    <div className="space-y-6 overflow-y-auto custom-scrollbar pr-2 pb-20">
-                        {/* Title Card */}
-                        <div className="relative bg-white dark:bg-dark-layer1 rounded-2xl p-8 border border-black/5 dark:border-white/5 shadow-lg overflow-hidden group">
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-colors duration-500" />
+                {/* Title Card - Full Width */}
+                <div className="relative bg-white dark:bg-dark-layer1 rounded-2xl p-8 border border-black/5 dark:border-white/5 shadow-lg overflow-hidden group mb-8">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-colors duration-500" />
 
-                            <div className="relative z-10">
-                                <div className="flex flex-col gap-4 mb-6">
-                                    <div className="flex items-start justify-between gap-4">
-                                        <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white tracking-tight leading-tight">
-                                            {problem.title}
-                                        </h1>
-                                        <button
-                                            onClick={handleToggleCompletion}
-                                            className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-300 ${isCompleted
-                                                ? 'bg-green-500/20 text-green-600 dark:text-green-400 border border-green-500/50'
-                                                : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 border border-black/5 dark:border-white/10 hover:bg-green-500/10 hover:text-green-600 dark:hover:text-green-400 hover:border-green-500/30'
-                                                }`}
-                                        >
-                                            {isCompleted ? (
-                                                <>
-                                                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                                                    <span>Solved</span>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <div className="w-2 h-2 rounded-full bg-slate-400 dark:bg-slate-500 group-hover:bg-green-500 transition-colors" />
-                                                    <span>Mark Solved</span>
-                                                </>
-                                            )}
-                                        </button>
-                                    </div>
+                    <div className="relative z-10">
+                        <div className="flex flex-col gap-4">
+                            <div className="flex items-start justify-between gap-4">
+                                <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white tracking-tight leading-tight">
+                                    {problem.title}
+                                </h1>
+                                <button
+                                    onClick={handleToggleCompletion}
+                                    className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all duration-300 ${isCompleted
+                                        ? 'bg-green-500/20 text-green-600 dark:text-green-400 border border-green-500/50'
+                                        : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 border border-black/5 dark:border-white/10 hover:bg-green-500/10 hover:text-green-600 dark:hover:text-green-400 hover:border-green-500/30'
+                                        }`}
+                                >
+                                    {isCompleted ? (
+                                        <>
+                                            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                                            <span>Solved</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div className="w-2 h-2 rounded-full bg-slate-400 dark:bg-slate-500 group-hover:bg-green-500 transition-colors" />
+                                            <span>Mark Solved</span>
+                                        </>
+                                    )}
+                                </button>
+                            </div>
 
-                                    <div className="flex flex-wrap gap-2">
-                                        <div className={`px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider border ${problem.difficulty === 'Hard'
-                                            ? 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20'
-                                            : problem.difficulty === 'Medium'
-                                                ? 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20'
-                                                : 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20'
-                                            }`}>
-                                            {problem.difficulty}
-                                        </div>
-                                        {problem.tags.map(tag => (
-                                            <span key={tag} className="px-3 py-1 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 text-xs font-medium border border-black/5 dark:border-white/10">
-                                                {tag}
-                                            </span>
-                                        ))}
-                                    </div>
+                            <div className="flex flex-wrap gap-2">
+                                <div className={`px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider border ${problem.difficulty === 'Hard'
+                                    ? 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20'
+                                    : problem.difficulty === 'Medium'
+                                        ? 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20'
+                                        : 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20'
+                                    }`}>
+                                    {problem.difficulty}
                                 </div>
+                                {problem.tags.map(tag => (
+                                    <span key={tag} className="px-3 py-1 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 text-xs font-medium border border-black/5 dark:border-white/10">
+                                        {tag}
+                                    </span>
+                                ))}
                             </div>
                         </div>
+                    </div>
+                </div>
 
-                        {/* Problem Content */}
-                        <div className="space-y-8">
-                            <section className="max-w-none">
-                                <div className="bg-white dark:bg-dark-layer1 rounded-2xl p-6 border border-black/5 dark:border-white/5 shadow-sm">
-                                    <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                                        <div className="w-1 h-6 bg-primary rounded-full" />
-                                        Problem Description
-                                    </h2>
-                                    <MarkdownRenderer content={problemSection.replace('## Problem', '')} />
-                                </div>
-                            </section>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    {/* Left Column: Problem Description and Collapsible Sections */}
+                    <div className="space-y-6">
+                        {/* Problem Description */}
+                        <section className="max-w-none">
+                            <div className="bg-white dark:bg-dark-layer1 rounded-2xl p-6 border border-black/5 dark:border-white/5 shadow-sm">
+                                <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                                    <div className="w-1 h-6 bg-primary rounded-full" />
+                                    Problem Description
+                                </h2>
+                                <MarkdownRenderer content={problemSection.replace('## Problem', '')} />
+                            </div>
+                        </section>
 
-                            {testCasesSection && (
-                                <section className="bg-white dark:bg-dark-layer1 rounded-2xl p-6 border border-black/5 dark:border-white/5 shadow-sm">
-                                    <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                        {testCasesSection && (
+                            <section className="bg-white dark:bg-dark-layer1 rounded-2xl border border-black/5 dark:border-white/5 shadow-sm overflow-hidden">
+                                <button
+                                    onClick={() => setShowTestCases(!showTestCases)}
+                                    className="w-full flex items-center justify-between p-6 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+                                >
+                                    <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                                         <div className="w-1 h-6 bg-accent-blue rounded-full" />
                                         Test Cases
                                     </h2>
-                                    <MarkdownRenderer content={testCasesSection.replace('## Test Cases', '')} />
-                                </section>
-                            )}
+                                    {showTestCases ? <ChevronUp className="w-5 h-5 text-slate-500" /> : <ChevronDown className="w-5 h-5 text-slate-500" />}
+                                </button>
+                                {showTestCases && (
+                                    <div className="p-6 pt-0 border-t border-black/5 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02]">
+                                        <MarkdownRenderer content={testCasesSection.replace('## Test Cases', '')} />
+                                    </div>
+                                )}
+                            </section>
+                        )}
 
-                            {hintsSection && (
-                                <section className="bg-white dark:bg-dark-layer1 rounded-2xl border border-black/5 dark:border-white/5 shadow-sm overflow-hidden">
-                                    <button
-                                        onClick={() => setShowHint(!showHint)}
-                                        className="w-full flex items-center justify-between p-6 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
-                                    >
-                                        <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                                            <div className="w-1 h-6 bg-yellow-500 rounded-full" />
-                                            Hints
-                                        </h2>
-                                        {showHint ? <ChevronUp className="w-5 h-5 text-slate-500" /> : <ChevronDown className="w-5 h-5 text-slate-500" />}
-                                    </button>
-                                    {showHint && (
-                                        <div className="p-6 pt-0 border-t border-black/5 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02]">
-                                            <MarkdownRenderer content={hintsSection.replace('## Hints', '')} />
-                                        </div>
-                                    )}
-                                </section>
-                            )}
+                        {/* Approach - Collapsed by Default */}
+                        {approachSection && (
+                            <section className="bg-white dark:bg-dark-layer1 rounded-2xl border border-black/5 dark:border-white/5 shadow-sm overflow-hidden">
+                                <button
+                                    onClick={() => setApproachExpanded(!approachExpanded)}
+                                    className="w-full flex items-center justify-between p-6 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+                                >
+                                    <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                        <div className="w-1 h-6 bg-purple-500 rounded-full" />
+                                        Approach & Strategy
+                                    </h2>
+                                    {approachExpanded ? <ChevronUp className="w-5 h-5 text-slate-500" /> : <ChevronDown className="w-5 h-5 text-slate-500" />}
+                                </button>
+                                {approachExpanded && (
+                                    <div className="p-6 pt-0 border-t border-black/5 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02]">
+                                        <MarkdownRenderer content={approachSection.replace('## Approach', '')} />
+                                    </div>
+                                )}
+                            </section>
+                        )}
 
-                            {approachSection && (
-                                <section className="bg-white dark:bg-dark-layer1 rounded-2xl border border-black/5 dark:border-white/5 shadow-sm overflow-hidden">
-                                    <button
-                                        onClick={() => setApproachExpanded(!approachExpanded)}
-                                        className="w-full flex items-center justify-between p-6 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
-                                    >
-                                        <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                                            <div className="w-1 h-6 bg-purple-500 rounded-full" />
-                                            Approach & Strategy
-                                        </h2>
-                                        {approachExpanded ? <ChevronUp className="w-5 h-5 text-slate-500" /> : <ChevronDown className="w-5 h-5 text-slate-500" />}
-                                    </button>
-                                    {approachExpanded && (
-                                        <div className="p-6 pt-0 border-t border-black/5 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02]">
-                                            <MarkdownRenderer content={approachSection.replace('## Approach', '')} />
-                                        </div>
-                                    )}
-                                </section>
-                            )}
-                        </div>
+                        {/* Hints - Collapsed */}
+                        {hintsSection && (
+                            <section className="bg-white dark:bg-dark-layer1 rounded-2xl border border-black/5 dark:border-white/5 shadow-sm overflow-hidden">
+                                <button
+                                    onClick={() => setShowHint(!showHint)}
+                                    className="w-full flex items-center justify-between p-6 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+                                >
+                                    <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                        <div className="w-1 h-6 bg-yellow-500 rounded-full" />
+                                        Hints
+                                    </h2>
+                                    {showHint ? <ChevronUp className="w-5 h-5 text-slate-500" /> : <ChevronDown className="w-5 h-5 text-slate-500" />}
+                                </button>
+                                {showHint && (
+                                    <div className="p-6 pt-0 border-t border-black/5 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02]">
+                                        <MarkdownRenderer content={hintsSection.replace('## Hints', '')} />
+                                    </div>
+                                )}
+                            </section>
+                        )}
                     </div>
 
                     {/* Right Column: Code Editor */}
-                    <div className="h-full overflow-hidden">
-                        <div className="h-full bg-[#1e1e1e] rounded-2xl border border-black/5 dark:border-white/5 shadow-2xl flex flex-col overflow-hidden">
+                    <div className="flex flex-col gap-6">
+                        <div className="bg-[#1e1e1e] rounded-2xl border border-black/5 dark:border-white/5 shadow-2xl flex flex-col overflow-hidden">
                             {/* Editor Header */}
                             <div className="flex items-center justify-between p-4 border-b border-white/5 bg-[#252526]">
                                 <div className="flex items-center gap-3">
@@ -290,36 +301,17 @@ const ProblemDetail: React.FC = () => {
                                 </div>
                             </div>
 
-                            {/* Main Content Area (Editor + Solution) */}
-                            <div className="flex-1 flex flex-col min-h-0 relative">
-                                {/* Editor */}
-                                <div className={`${showSolution ? 'h-1/2 border-b border-white/5' : 'h-full'} relative transition-all duration-300`}>
-                                    <CodeEditor
-                                        initialCode={userCode}
-                                        onChange={setUserCode}
-                                        language={selectedLanguage}
-                                    />
-                                </div>
-
-                                {/* Solution View */}
-                                {showSolution && displayedSolution && (
-                                    <div className="h-1/2 flex flex-col bg-white dark:bg-dark-layer1 animate-fade-in">
-                                        <div className="flex items-center justify-between p-4 border-b border-black/5 dark:border-white/5 bg-slate-50 dark:bg-dark-layer2">
-                                            <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                                                <Sparkles className="w-4 h-4 text-primary" />
-                                                Official Solution
-                                            </h3>
-                                            <span className="text-xs font-mono text-slate-500 uppercase">{selectedLanguage}</span>
-                                        </div>
-                                        <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
-                                            <MarkdownRenderer content={displayedSolution} />
-                                        </div>
-                                    </div>
-                                )}
+                            {/* Editor */}
+                            <div className="h-[500px]">
+                                <CodeEditor
+                                    initialCode={userCode}
+                                    onChange={setUserCode}
+                                    language={selectedLanguage}
+                                />
                             </div>
 
                             {/* Editor Actions */}
-                            <div className="p-4 border-t border-white/5 bg-[#252526] flex gap-3 z-10">
+                            <div className="p-4 border-t border-white/5 bg-[#252526] flex gap-3">
                                 <button
                                     onClick={handleToggleSolution}
                                     className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-[#1e1e1e] border border-white/10 text-slate-300 font-semibold rounded-xl hover:bg-white/5 hover:text-white transition-all"
@@ -336,6 +328,22 @@ const ProblemDetail: React.FC = () => {
                                 </button>
                             </div>
                         </div>
+
+                        {/* Solution View - Separate Section Below Editor */}
+                        {showSolution && displayedSolution && (
+                            <div className="bg-white dark:bg-dark-layer1 rounded-2xl border border-black/5 dark:border-white/5 shadow-sm overflow-hidden animate-fade-in">
+                                <div className="flex items-center justify-between p-4 border-b border-black/5 dark:border-white/5 bg-slate-50 dark:bg-dark-layer2">
+                                    <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                        <Sparkles className="w-4 h-4 text-primary" />
+                                        Official Solution
+                                    </h3>
+                                    <span className="text-xs font-mono text-slate-500 uppercase">{selectedLanguage}</span>
+                                </div>
+                                <div className="p-6">
+                                    <MarkdownRenderer content={displayedSolution} />
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

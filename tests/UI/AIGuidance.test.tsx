@@ -30,6 +30,7 @@ describe('AIGuidance Component', () => {
         tags: [],
         source: 'LeetCode',
         date: new Date().toISOString(),
+        set: 'set1',
         content: 'Problem content',
         starterCode: {}
     };

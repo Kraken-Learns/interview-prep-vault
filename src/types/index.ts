@@ -11,6 +11,7 @@ export interface Problem {
     tags: string[];
     source: string;
     date: string;
+    set: string; // The set this problem belongs to (e.g., 'set1', 'set2')
     content: string; // The full markdown content
     testCases?: TestCase[];
     starterCode?: Record<string, string>;
