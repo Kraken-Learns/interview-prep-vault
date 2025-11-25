@@ -34,7 +34,7 @@ const ProblemCard: React.FC<ProblemCardProps> = ({ problem }) => {
     }[problem.difficulty];
 
     return (
-        <Link to={`/problem/${problem.slug}`} className="block group">
+        <Link to={`/problem/${problem.set}/${problem.slug}`} className="block group">
             <div className={`relative bg-white dark:bg-dark-layer1 rounded-2xl p-6 border border-slate-200 dark:border-white/5 shadow-lg transition-all duration-500 hover:-translate-y-1 hover:border-primary/50 dark:hover:border-white/10 overflow-hidden ${difficultyConfig.glow}`}>
                 {/* Shimmer Effect on Hover */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">

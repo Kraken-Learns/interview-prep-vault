@@ -1,7 +1,7 @@
 ---
 title: "3 Sum"
 difficulty: "Medium"
-tags: ["Array", "Two Pointers", "Sorting"]
+tags: ["Two Pointers"]
 date: "2023-10-29"
 source: "LeetCode"
 starterCode:

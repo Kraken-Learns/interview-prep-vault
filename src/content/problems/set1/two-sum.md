@@ -1,7 +1,7 @@
 ---
 title: "Two Sum in Sorted Array"
 difficulty: "Easy"
-tags: ["Array", "Two Pointers"]
+tags: ["Two Pointers"]
 date: "2023-10-27"
 source: "Hello interview"
 starterCode:

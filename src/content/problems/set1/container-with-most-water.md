@@ -1,7 +1,7 @@
 ---
 title: "Container With Most Water"
 difficulty: "Medium"
-tags: ["Array", "Two Pointers", "Greedy"]
+tags: ["Two Pointers", "Greedy"]
 date: "2023-10-28"
 source: "LeetCode"
 starterCode:

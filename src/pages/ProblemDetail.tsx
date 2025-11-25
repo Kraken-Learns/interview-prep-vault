@@ -10,7 +10,7 @@ import CodeEditor from '@/components/CodeEditor';
 import AIGuidance from '@/components/AIGuidance';
 
 const ProblemDetail: React.FC = () => {
-    const { slug } = useParams<{ slug: string }>();
+    const { set, slug } = useParams<{ set: string; slug: string }>();
     const [problem, setProblem] = useState<Problem | null>(null);
     const [loading, setLoading] = useState(true);
     const [selectedLanguage, setSelectedLanguage] = useState('python');
@@ -37,8 +37,8 @@ const ProblemDetail: React.FC = () => {
     };
 
     useEffect(() => {
-        if (slug) {
-            getProblem(slug).then((data) => {
+        if (set && slug) {
+            getProblem(set, slug).then((data) => {
                 if (data) {
                     data.tags = data.tags.filter(t => t.toLowerCase() !== 'hellointerview');
                 }
@@ -49,7 +49,7 @@ const ProblemDetail: React.FC = () => {
                 setLoading(false);
             });
         }
-    }, [slug]);
+    }, [set, slug]);
 
     // Update code when language changes
     useEffect(() => {

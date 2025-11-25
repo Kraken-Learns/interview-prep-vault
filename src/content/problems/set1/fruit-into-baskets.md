@@ -1,7 +1,7 @@
 ---
 title: "Fruit Into Baskets"
 difficulty: "Medium"
-tags: ["Array", "Hash Table", "Sliding Window"]
+tags: ["Sliding Window"]
 date: "2025-11-25"
 source: "LeetCode"
 starterCode:

@@ -1,7 +1,7 @@
 ---
 title: "Triangle Numbers"
 difficulty: "Medium"
-tags: ["Array", "Two Pointers", "Sorting"]
+tags: ["Two Pointers"]
 date: "2025-11-25"
 source: "LeetCode"
 starterCode:

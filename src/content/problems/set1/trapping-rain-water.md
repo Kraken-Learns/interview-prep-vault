@@ -1,7 +1,7 @@
 ---
 title: "Trapping Rain Water"
 difficulty: "Hard"
-tags: ["Array", "Two Pointers", "Dynamic Programming", "Stack"]
+tags: ["Two Pointers", "Dynamic Programming"]
 date: "2025-11-25"
 source: "LeetCode"
 starterCode:

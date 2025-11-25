@@ -1,7 +1,7 @@
 ---
 title: "Move Zeroes"
 difficulty: "Easy"
-tags: ["Array", "Two Pointers"]
+tags: ["Two Pointers"]
 date: "2025-11-25"
 source: "LeetCode"
 starterCode:

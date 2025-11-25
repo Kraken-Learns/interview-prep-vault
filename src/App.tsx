@@ -13,7 +13,7 @@ function App() {
           <Layout>
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/problem/:slug" element={<ProblemDetail />} />
+              <Route path="/problem/:set/:slug" element={<ProblemDetail />} />
             </Routes>
           </Layout>
         </Router>

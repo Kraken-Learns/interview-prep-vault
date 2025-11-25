@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { getAllProblems } from '@/lib/problems';
 import type { Problem } from '@/types';
 import ProblemCard from '@/components/ProblemCard';
+import SetCard from '@/components/SetCard';
 import TagSidebar from '@/components/TagSidebar';
 import SystemDesignView from '@/components/SystemDesignView';
 import { Search, X, Code2, Network, Library } from 'lucide-react';
@@ -17,6 +18,7 @@ const Home: React.FC = () => {
     const [allTags, setAllTags] = useState<string[]>([]);
     const [showAutocomplete, setShowAutocomplete] = useState(false);
     const [selectedTagIndex, setSelectedTagIndex] = useState(-1);
+    const [selectedSet, setSelectedSet] = useState<string | null>(null);
     const searchRef = useRef<HTMLDivElement>(null);
 
     // Load problems and extract tags
@@ -304,23 +306,98 @@ const Home: React.FC = () => {
                             </div>
                         )}
 
-                        {/* Problem Cards */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {filteredProblems.map((problem) => (
-                                <ProblemCard key={problem.slug} problem={problem} />
-                            ))}
-                        </div>
+                        {/* Problem Sets / Problem List */}
+                        <div className="space-y-8">
+                            {!selectedSet ? (
+                                // Show Set Cards
+                                (() => {
+                                    // Group problems by set
+                                    const problemsBySet = filteredProblems.reduce((acc, problem) => {
+                                        if (!acc[problem.set]) {
+                                            acc[problem.set] = [];
+                                        }
+                                        acc[problem.set].push(problem);
+                                        return acc;
+                                    }, {} as Record<string, Problem[]>);
 
-                        {/* Empty State */}
-                        {filteredProblems.length === 0 && (
-                            <div className="text-center py-20">
-                                <div className="inline-block p-6 rounded-2xl bg-white/5 mb-4">
-                                    <Search className="w-16 h-16 text-slate-600 mx-auto" />
-                                </div>
-                                <p className="text-xl font-semibold text-slate-400">No problems found</p>
-                                <p className="text-slate-500 mt-2">Try adjusting your search or filters</p>
-                            </div>
-                        )}
+                                    // Ensure set2 is included even if empty
+                                    if (!problemsBySet['set2']) {
+                                        problemsBySet['set2'] = [];
+                                    }
+
+                                    const sets = Object.keys(problemsBySet).sort();
+
+                                    return sets.length > 0 ? (
+                                        sets.map(setName => (
+                                            <SetCard
+                                                key={setName}
+                                                setName={setName}
+                                                problems={problemsBySet[setName]}
+                                                onClick={() => setSelectedSet(setName)}
+                                            />
+                                        ))
+                                    ) : (
+                                        <div className="text-center py-20">
+                                            <div className="inline-block p-6 rounded-2xl bg-white/5 mb-4">
+                                                <Search className="w-16 h-16 text-slate-600 mx-auto" />
+                                            </div>
+                                            <p className="text-xl font-semibold text-slate-400">No problems found</p>
+                                            <p className="text-slate-500 mt-2">Try adjusting your search or filters</p>
+                                        </div>
+                                    );
+                                })()
+                            ) : (
+                                // Show Problems in Selected Set
+                                (() => {
+                                    const setProblems = filteredProblems.filter(p => p.set === selectedSet);
+
+                                    // Format set name: "set1" -> "Set 1"
+                                    const formatSetName = (name: string) => {
+                                        return name.replace(/set(\d+)/i, 'Set $1');
+                                    };
+
+                                    return (
+                                        <div className="space-y-6">
+                                            {/* Back Button & Set Title */}
+                                            <div className="flex items-center gap-4">
+                                                <button
+                                                    onClick={() => setSelectedSet(null)}
+                                                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-dark-layer1 border border-black/10 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:border-primary/50 transition-all font-semibold shadow-sm hover:shadow-md"
+                                                >
+                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                                    </svg>
+                                                    Back to Sets
+                                                </button>
+                                                <h2 className="text-3xl font-bold text-slate-900 dark:text-white">
+                                                    {formatSetName(selectedSet)}
+                                                    <span className="ml-3 text-lg text-slate-500 dark:text-slate-400 font-normal">
+                                                        {setProblems.length} {setProblems.length === 1 ? 'problem' : 'problems'}
+                                                    </span>
+                                                </h2>
+                                            </div>
+
+                                            {/* Problems Grid */}
+                                            {setProblems.length > 0 ? (
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
+                                                    {setProblems.map((problem) => (
+                                                        <ProblemCard key={problem.slug} problem={problem} />
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <div className="text-center py-20">
+                                                    <div className="inline-block p-6 rounded-2xl bg-white/5 mb-4">
+                                                        <Search className="w-16 h-16 text-slate-600 mx-auto" />
+                                                    </div>
+                                                    <p className="text-xl font-semibold text-slate-400">No problems found in this set</p>
+                                                    <p className="text-slate-500 mt-2">Try adjusting your search or filters</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })()
+                            )}
+                        </div>
                     </div>
                 </div>
             )}
