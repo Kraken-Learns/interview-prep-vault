@@ -12,7 +12,7 @@ const ProgressRing: React.FC<ProgressRingProps> = ({ total, completed, onClearPr
     const stroke = 8;
     const normalizedRadius = radius - stroke * 2;
     const circumference = normalizedRadius * 2 * Math.PI;
-    const strokeDashoffset = circumference - (completed / total) * circumference;
+    const strokeDashoffset = total === 0 ? circumference : circumference - (completed / total) * circumference;
     const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
 
     return (
