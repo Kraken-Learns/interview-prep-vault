@@ -1,7 +1,7 @@
 ---
 title: "Can Attend Meetings"
 difficulty: "Easy"
-tags: ["Intervals", "Sorting", "Array"]
+tags: ["Intervals"]
 date: "2025-11-30"
 source: "LeetCode"
 starterCode:

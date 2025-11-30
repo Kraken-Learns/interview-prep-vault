@@ -1,7 +1,7 @@
 ---
 title: "Maximum Sum of Subarrays of Size K"
 difficulty: "Easy"
-tags: ["Sliding Window", "Array"]
+tags: ["Sliding Window"]
 date: "2025-11-29"
 source: "LeetCode"
 starterCode:

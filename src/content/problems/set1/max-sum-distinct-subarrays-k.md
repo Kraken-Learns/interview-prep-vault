@@ -1,7 +1,7 @@
 ---
 title: "Max Sum of Distinct Subarrays Length k"
 difficulty: "Medium"
-tags: ["Sliding Window", "Hash Table", "Array"]
+tags: ["Sliding Window"]
 date: "2025-11-30"
 source: "LeetCode"
 starterCode:

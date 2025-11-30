@@ -1,7 +1,7 @@
 ---
 title: "Max Points You Can Obtain From Cards"
 difficulty: "Medium"
-tags: ["Sliding Window", "Array"]
+tags: ["Sliding Window"]
 date: "2025-11-29"
 source: "LeetCode"
 starterCode:
