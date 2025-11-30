@@ -15,10 +15,15 @@ export async function getAllProblems(): Promise<Problem[]> {
         const set = parts.pop() || 'unknown';
         const slug = filename.replace('.md', '');
 
+        if (!slug || !data.title) {
+            console.warn(`Skipping invalid problem file: ${path}`);
+            continue;
+        }
+
         problems.push({
             slug,
             title: data.title,
-            difficulty: data.difficulty,
+            difficulty: data.difficulty || 'Medium', // Default to Medium if missing
             tags: data.tags || [],
             source: data.source || 'Unknown',
             date: data.date || new Date().toISOString(),

@@ -31,11 +31,22 @@ const ProblemCard: React.FC<ProblemCardProps> = ({ problem }) => {
             border: 'border-red-200 dark:border-red-400/20',
             glow: 'group-hover:shadow-[0_0_20px_rgba(248,113,113,0.2)]'
         },
-    }[problem.difficulty];
+    } as const;
+
+    const config = difficultyConfig[problem.difficulty as keyof typeof difficultyConfig] || {
+        text: 'text-slate-600 dark:text-slate-400',
+        bg: 'bg-slate-100 dark:bg-slate-400/10',
+        border: 'border-slate-200 dark:border-slate-400/20',
+        glow: ''
+    };
+
+    if (!difficultyConfig[problem.difficulty as keyof typeof difficultyConfig]) {
+        console.warn(`Invalid difficulty for problem ${problem.title}: ${problem.difficulty}`);
+    }
 
     return (
         <Link to={`/problem/${problem.set}/${problem.slug}`} className="block group">
-            <div className={`relative bg-white dark:bg-dark-layer1 rounded-2xl p-6 border border-slate-200 dark:border-white/5 shadow-lg transition-all duration-500 hover:-translate-y-1 hover:border-primary/50 dark:hover:border-white/10 overflow-hidden ${difficultyConfig.glow}`}>
+            <div className={`relative bg-white dark:bg-dark-layer1 rounded-2xl p-6 border border-slate-200 dark:border-white/5 shadow-lg transition-all duration-500 hover:-translate-y-1 hover:border-primary/50 dark:hover:border-white/10 overflow-hidden ${config.glow}`}>
                 {/* Shimmer Effect on Hover */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-slate-100/50 dark:via-white/5 to-transparent animate-shimmer"></div>
@@ -54,7 +65,7 @@ const ProblemCard: React.FC<ProblemCardProps> = ({ problem }) => {
                                 {isCompleted && <CheckCircle className="w-5 h-5 text-green-500" />}
                             </h3>
                         </div>
-                        <span className={`shrink-0 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border ${difficultyConfig.bg} ${difficultyConfig.text} ${difficultyConfig.border}`}>
+                        <span className={`shrink-0 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border ${config.bg} ${config.text} ${config.border}`}>
                             {problem.difficulty}
                         </span>
                     </div>
