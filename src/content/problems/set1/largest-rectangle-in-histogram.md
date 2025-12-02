@@ -1,7 +1,7 @@
 ---
 title: "Largest Rectangle in Histogram"
 difficulty: "Hard"
-tags: ["Array", "Stack", "Monotonic Stack"]
+tags: ["Stack", "Monotonic Stack"]
 date: "2025-12-02"
 source: "LeetCode"
 starterCode:
