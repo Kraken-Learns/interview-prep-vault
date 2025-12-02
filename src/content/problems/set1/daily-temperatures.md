@@ -1,7 +1,7 @@
 ---
 title: "Daily Temperatures"
 difficulty: "Medium"
-tags: ["Stack", "Array", "Monotonic Stack"]
+tags: ["Stack", "Monotonic Stack"]
 date: "2025-12-01"
 source: "LeetCode"
 starterCode:
