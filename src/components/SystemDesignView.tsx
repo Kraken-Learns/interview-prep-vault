@@ -1,9 +1,9 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import MarkdownRenderer from './MarkdownRenderer';
-import { SYSTEM_DESIGN_TOPICS, type SystemDesignTopic } from '@/data/systemDesign';
+import { getAllSystemDesignTopics, type SystemDesignTopic } from '@/lib/systemDesign';
 import SystemDesignCard from './SystemDesignCard';
 import { useProgress } from '@/context/ProgressContext';
-import { BookOpen, Layers, BrainCircuit, CheckCircle, Circle, ArrowLeft } from 'lucide-react';
+import { BookOpen, Layers, BrainCircuit, CheckCircle, Circle, ArrowLeft, Loader2 } from 'lucide-react';
 
 type ViewState = 'categories' | 'topic-list' | 'topic-content';
 
@@ -11,7 +11,16 @@ const SystemDesignView: React.FC = () => {
     const [viewState, setViewState] = useState<ViewState>('categories');
     const [selectedCategory, setSelectedCategory] = useState<SystemDesignTopic['category'] | null>(null);
     const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
+    const [topics, setTopics] = useState<SystemDesignTopic[]>([]);
+    const [loading, setLoading] = useState(true);
     const { toggleSystemDesignArticleRead, isSystemDesignArticleRead } = useProgress();
+
+    useEffect(() => {
+        getAllSystemDesignTopics().then(data => {
+            setTopics(data);
+            setLoading(false);
+        });
+    }, []);
 
     const categories = [
         {
@@ -36,13 +45,13 @@ const SystemDesignView: React.FC = () => {
 
     const filteredTopics = useMemo(() => {
         if (!selectedCategory) return [];
-        return SYSTEM_DESIGN_TOPICS.filter(t => t.category === selectedCategory);
-    }, [selectedCategory]);
+        return topics.filter(t => t.category === selectedCategory);
+    }, [selectedCategory, topics]);
 
     const selectedTopic = useMemo(() => {
         if (!selectedTopicId) return null;
-        return SYSTEM_DESIGN_TOPICS.find(t => t.id === selectedTopicId);
-    }, [selectedTopicId]);
+        return topics.find(t => t.id === selectedTopicId);
+    }, [selectedTopicId, topics]);
 
     const handleCategoryClick = (category: SystemDesignTopic['category']) => {
         setSelectedCategory(category);
@@ -65,11 +74,19 @@ const SystemDesignView: React.FC = () => {
     };
 
     const getCategoryStats = (category: string) => {
-        const topics = SYSTEM_DESIGN_TOPICS.filter(t => t.category === category);
-        const total = topics.length;
-        const read = topics.filter(t => isSystemDesignArticleRead(t.id)).length;
+        const categoryTopics = topics.filter(t => t.category === category);
+        const total = categoryTopics.length;
+        const read = categoryTopics.filter(t => isSystemDesignArticleRead(t.id)).length;
         return { total, read };
     };
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center min-h-[50vh]">
+                <Loader2 className="w-10 h-10 text-primary animate-spin" />
+            </div>
+        );
+    }
 
     if (viewState === 'categories') {
         return (
