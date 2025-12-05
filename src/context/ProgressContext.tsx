@@ -4,6 +4,9 @@ interface ProgressContextType {
     completedProblems: string[];
     toggleProblemCompletion: (slug: string) => void;
     isProblemCompleted: (slug: string) => boolean;
+    readSystemDesignArticles: string[];
+    toggleSystemDesignArticleRead: (id: string) => void;
+    isSystemDesignArticleRead: (id: string) => boolean;
     clearAllProgress: () => void;
 }
 
@@ -27,9 +30,18 @@ export const ProgressProvider: React.FC<ProgressProviderProps> = ({ children }) 
         return saved ? JSON.parse(saved) : [];
     });
 
+    const [readSystemDesignArticles, setReadSystemDesignArticles] = useState<string[]>(() => {
+        const saved = localStorage.getItem('readSystemDesignArticles');
+        return saved ? JSON.parse(saved) : [];
+    });
+
     useEffect(() => {
         localStorage.setItem('completedProblems', JSON.stringify(completedProblems));
     }, [completedProblems]);
+
+    useEffect(() => {
+        localStorage.setItem('readSystemDesignArticles', JSON.stringify(readSystemDesignArticles));
+    }, [readSystemDesignArticles]);
 
     const toggleProblemCompletion = (slug: string) => {
         setCompletedProblems((prev) => {
@@ -41,12 +53,27 @@ export const ProgressProvider: React.FC<ProgressProviderProps> = ({ children }) 
         });
     };
 
+    const toggleSystemDesignArticleRead = (id: string) => {
+        setReadSystemDesignArticles((prev) => {
+            if (prev.includes(id)) {
+                return prev.filter((s) => s !== id);
+            } else {
+                return [...prev, id];
+            }
+        });
+    };
+
     const isProblemCompleted = (slug: string) => {
         return completedProblems.includes(slug);
     };
 
+    const isSystemDesignArticleRead = (id: string) => {
+        return readSystemDesignArticles.includes(id);
+    };
+
     const clearAllProgress = () => {
         setCompletedProblems([]);
+        setReadSystemDesignArticles([]);
     };
 
     return (
@@ -55,6 +82,9 @@ export const ProgressProvider: React.FC<ProgressProviderProps> = ({ children }) 
                 completedProblems,
                 toggleProblemCompletion,
                 isProblemCompleted,
+                readSystemDesignArticles,
+                toggleSystemDesignArticleRead,
+                isSystemDesignArticleRead,
                 clearAllProgress,
             }}
         >
