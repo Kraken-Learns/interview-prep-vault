@@ -253,6 +253,14 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
                                     language={language}
                                     PreTag="div"
                                     showLineNumbers={true}
+                                    codeTagProps={{
+                                        style: {
+                                            backgroundColor: 'transparent',
+                                            padding: 0,
+                                            margin: 0,
+                                        },
+                                        className: '!bg-transparent !p-0 !m-0 !box-border'
+                                    }}
                                     customStyle={{
                                         margin: 0,
                                         padding: '1.5rem',
