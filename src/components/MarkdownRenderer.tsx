@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import remarkGfm from 'remark-gfm';
-import { AlertCircle, AlertTriangle, Lightbulb, Info, Flame, CheckCircle } from 'lucide-react';
+import { AlertCircle, AlertTriangle, Lightbulb, Info, Flame } from 'lucide-react';
 import MermaidDiagram from './MermaidDiagram';
 import './MarkdownRenderer.css';
 
@@ -17,44 +17,50 @@ const AlertBlock = ({ type, children }: { type: string, children: React.ReactNod
             case 'tip':
                 return {
                     icon: Lightbulb,
-                    title: 'Tip',
-                    className: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-900 dark:text-emerald-200',
-                    iconColor: 'text-emerald-500'
+                    title: 'Pro Tip',
+                    className: 'bg-emerald-50 border-emerald-200 text-emerald-900 dark:bg-emerald-500/10 dark:border-emerald-500/20 dark:text-emerald-200',
+                    iconColor: 'text-emerald-600 dark:text-emerald-400',
+                    titleColor: 'text-emerald-800 dark:text-emerald-300'
                 };
             case 'note':
                 return {
                     icon: Info,
                     title: 'Note',
-                    className: 'bg-blue-500/10 border-blue-500/20 text-blue-900 dark:text-blue-200',
-                    iconColor: 'text-blue-500'
+                    className: 'bg-blue-50 border-blue-200 text-blue-900 dark:bg-blue-500/10 dark:border-blue-500/20 dark:text-blue-200',
+                    iconColor: 'text-blue-600 dark:text-blue-400',
+                    titleColor: 'text-blue-800 dark:text-blue-300'
                 };
             case 'important':
                 return {
                     icon: AlertCircle,
                     title: 'Important',
-                    className: 'bg-purple-500/10 border-purple-500/20 text-purple-900 dark:text-purple-200',
-                    iconColor: 'text-purple-500'
+                    className: 'bg-purple-50 border-purple-200 text-purple-900 dark:bg-purple-500/10 dark:border-purple-500/20 dark:text-purple-200',
+                    iconColor: 'text-purple-600 dark:text-purple-400',
+                    titleColor: 'text-purple-800 dark:text-purple-300'
                 };
             case 'warning':
                 return {
                     icon: AlertTriangle,
                     title: 'Warning',
-                    className: 'bg-amber-500/10 border-amber-500/20 text-amber-900 dark:text-amber-200',
-                    iconColor: 'text-amber-500'
+                    className: 'bg-amber-50 border-amber-200 text-amber-900 dark:bg-amber-500/10 dark:border-amber-500/20 dark:text-amber-200',
+                    iconColor: 'text-amber-600 dark:text-amber-400',
+                    titleColor: 'text-amber-800 dark:text-amber-300'
                 };
             case 'caution':
                 return {
                     icon: Flame,
                     title: 'Caution',
-                    className: 'bg-red-500/10 border-red-500/20 text-red-900 dark:text-red-200',
-                    iconColor: 'text-red-500'
+                    className: 'bg-red-50 border-red-200 text-red-900 dark:bg-red-500/10 dark:border-red-500/20 dark:text-red-200',
+                    iconColor: 'text-red-600 dark:text-red-400',
+                    titleColor: 'text-red-800 dark:text-red-300'
                 };
             default:
                 return {
                     icon: Info,
                     title: 'Note',
-                    className: 'bg-slate-500/10 border-slate-500/20 text-slate-900 dark:text-slate-200',
-                    iconColor: 'text-slate-500'
+                    className: 'bg-slate-50 border-slate-200 text-slate-900 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200',
+                    iconColor: 'text-slate-600 dark:text-slate-400',
+                    titleColor: 'text-slate-800 dark:text-slate-300'
                 };
         }
     };
@@ -63,13 +69,16 @@ const AlertBlock = ({ type, children }: { type: string, children: React.ReactNod
     const Icon = config.icon;
 
     return (
-        <div className={`my-6 rounded-lg border p-4 ${config.className}`}>
-            <div className="flex items-start gap-3">
-                <Icon className={`w-5 h-5 flex-shrink-0 mt-0.5 ${config.iconColor}`} />
-                <div className="text-base leading-7">
-                    {/* Add title if needed, or just content */}
-                    {/* <div className={`font-bold mb-1 ${config.iconColor}`}>{config.title}</div> */}
-                    <div className="[&>p:first-child]:mt-0 [&>p:last-child]:mb-0">
+        <div className={`my-8 rounded-xl border p-5 transition-all duration-300 hover:shadow-sm ${config.className}`}>
+            <div className="flex items-start gap-4">
+                <div className={`p-2 rounded-lg bg-white/50 dark:bg-white/5 shadow-sm ring-1 ring-inset ring-black/5 dark:ring-white/5`}>
+                    <Icon className={`w-5 h-5 ${config.iconColor}`} />
+                </div>
+                <div className="flex-1 min-w-0">
+                    <div className={`text-sm font-bold uppercase tracking-wider mb-2 ${config.titleColor}`}>
+                        {config.title}
+                    </div>
+                    <div className="text-base leading-relaxed [&>p:first-child]:mt-0 [&>p:last-child]:mb-0 relative">
                         {children}
                     </div>
                 </div>
@@ -80,25 +89,62 @@ const AlertBlock = ({ type, children }: { type: string, children: React.ReactNod
 
 const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
     return (
-        <div className="markdown-content prose dark:prose-invert prose-slate max-w-none 
+        <div className="markdown-content prose dark:prose-invert max-w-none
+            
+            /* Text & Headings - Optimized for readability and hierarchy */
             prose-headings:font-bold prose-headings:tracking-tight 
-            prose-h1:text-4xl prose-h1:mb-8 prose-h1:text-slate-900 dark:prose-h1:text-white prose-h1:border-b prose-h1:border-slate-200 dark:prose-h1:border-white/10 prose-h1:pb-4
-            prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:text-slate-800 dark:prose-h2:text-slate-100
-            prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-4 prose-h3:text-slate-800 dark:prose-h3:text-slate-200
+            prose-h1:text-4xl prose-h1:font-extrabold prose-h1:mb-8 prose-h1:text-slate-900 dark:prose-h1:text-white 
+            prose-h1:border-b prose-h1:border-slate-200 dark:prose-h1:border-white/10 prose-h1:pb-6
+            
+            prose-h2:text-3xl prose-h2:font-bold prose-h2:mt-12 prose-h2:mb-6 prose-h2:text-slate-800 dark:prose-h2:text-slate-100
+            prose-h2:border-b prose-h2:border-slate-100 dark:prose-h2:border-white/5 prose-h2:pb-2
+            
+            prose-h3:text-2xl prose-h3:font-semibold prose-h3:mt-8 prose-h3:mb-4 prose-h3:text-slate-800 dark:prose-h3:text-slate-200
+            
             prose-p:text-lg prose-p:leading-8 prose-p:text-slate-600 dark:prose-p:text-slate-300 prose-p:my-6
-            prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-a:font-medium
-            prose-code:text-primary-dark dark:prose-code:text-primary-light prose-code:bg-primary/5 dark:prose-code:bg-primary/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:before:content-none prose-code:after:content-none prose-code:font-mono prose-code:text-sm
+            
+            /* Links */
+            prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline prose-a:font-medium prose-a:transition-colors
+            
+            /* Inline Code */
+            prose-code:text-slate-800 dark:prose-code:text-slate-200 
+            prose-code:bg-slate-100 dark:prose-code:bg-white/10 
+            prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md 
+            prose-code:before:content-none prose-code:after:content-none 
+            prose-code:font-mono prose-code:text-sm prose-code:font-medium
+            
+            /* Strong/Bold */
             prose-strong:text-slate-900 dark:prose-strong:text-white prose-strong:font-bold
+            
+            /* Lists */
             prose-li:text-lg prose-li:text-slate-600 dark:prose-li:text-slate-300 prose-li:my-2
-            prose-ul:my-6 prose-ul:list-disc prose-ul:pl-6
-            prose-ol:my-6 prose-ol:list-decimal prose-ol:pl-6
-            prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-primary/5 prose-blockquote:pl-6 prose-blockquote:py-2 prose-blockquote:pr-4 prose-blockquote:rounded-r-lg prose-blockquote:italic prose-blockquote:text-slate-700 dark:prose-blockquote:text-slate-300
+            prose-ul:my-6 prose-ul:list-disc prose-ul:pl-6 prose-ul:marker:text-slate-400 dark:prose-ul:marker:text-slate-500
+            prose-ol:my-6 prose-ol:list-decimal prose-ol:pl-6 prose-ol:marker:text-slate-400 dark:prose-ol:marker:text-slate-500
+            
+            /* Blockquotes */
+            prose-blockquote:border-l-4 prose-blockquote:border-blue-500 
+            prose-blockquote:bg-slate-50 dark:prose-blockquote:bg-white/5 
+            prose-blockquote:pl-6 prose-blockquote:py-4 prose-blockquote:pr-4 
+            prose-blockquote:rounded-r-lg prose-blockquote:italic 
+            prose-blockquote:text-slate-700 dark:prose-blockquote:text-slate-300
+            prose-blockquote:not-italic
+            
+            /* Images */
+            prose-img:rounded-xl prose-img:shadow-lg prose-img:border prose-img:border-slate-200 dark:prose-img:border-white/10
+            
+            /* Spacing overrides */
             [&>p]:my-6 [&>ul]:my-6 [&>ol]:my-6 [&>ul>li]:my-2 [&>ol>li]:my-2
             
-            /* Table Styles */
-            prose-table:w-full prose-table:my-8 prose-table:border-collapse prose-table:text-left
-            prose-th:font-bold prose-th:text-slate-900 dark:prose-th:text-slate-100 prose-th:border-b prose-th:border-slate-200 dark:prose-th:border-white/10 prose-th:p-4 prose-th:bg-slate-50 dark:prose-th:bg-white/5
-            prose-td:border-b prose-td:border-slate-200 dark:prose-td:border-white/10 prose-td:p-4 prose-td:text-slate-600 dark:prose-td:text-slate-300 prose-td:align-top
+            /* Table Styles - Modern & Clean */
+            prose-table:w-full prose-table:my-8 prose-table:border-collapse prose-table:text-left prose-table:overflow-hidden prose-table:rounded-lg prose-table:shadow-sm prose-table:border prose-table:border-slate-200 dark:prose-table:border-white/10
+            
+            prose-th:font-semibold prose-th:text-sm prose-th:uppercase prose-th:tracking-wider prose-th:text-slate-700 dark:prose-th:text-slate-200 
+            prose-th:border-b prose-th:border-slate-200 dark:prose-th:border-white/10 
+            prose-th:p-4 prose-th:bg-slate-50 dark:prose-th:bg-white/5
+            
+            prose-td:border-b prose-td:border-slate-200 dark:prose-td:border-white/5 
+            prose-td:p-4 prose-td:text-slate-600 dark:prose-td:text-slate-300 
+            prose-td:align-top prose-td:text-base selection:bg-blue-100 dark:selection:bg-blue-900
             ">
             <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
@@ -106,10 +152,6 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
                     blockquote({ node, children, ...props }: any) {
                         // Check for alerts
                         const childArray = React.Children.toArray(children);
-
-                        // Find the first paragraph-like element
-                        let alertType = null;
-                        let alertContent = children;
 
                         // Helper to traverse and find the text content
                         const findAlertPattern = (nodes: React.ReactNode[]): { type: string | null, remainingContent: React.ReactNode[] } | null => {
