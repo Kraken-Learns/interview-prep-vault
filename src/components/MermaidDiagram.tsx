@@ -107,7 +107,7 @@ const MermaidDiagram: React.FC<MermaidDiagramProps> = ({ chart }) => {
         <div
             ref={containerRef}
             className={`
-                flex justify-center my-8 p-6 rounded-xl overflow-hidden transition-colors duration-300 max-w-2xl mx-auto
+                flex justify-center my-8 p-6 rounded-xl overflow-x-auto transition-colors duration-300 max-w-2xl mx-auto
                 ${isDark
                     ? 'bg-white/5 border border-white/10'
                     : 'bg-white border border-slate-200'
