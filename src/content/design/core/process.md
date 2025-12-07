@@ -97,7 +97,7 @@ Define how the outside world interacts with your black box. Use REST or gRPC sty
 
 ### Define Endpoints
 
-```typescript
+```http
 // Create a short URL
 POST /api/v1/urls
 Request: {

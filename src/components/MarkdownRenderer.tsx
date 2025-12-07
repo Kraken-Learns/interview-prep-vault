@@ -236,14 +236,14 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
                         }
 
                         return !inline && match ? (
-                            <div className="rounded-xl overflow-hidden my-6 shadow-lg border border-white/10 bg-[#1e1e1e]">
-                                <div className="flex items-center justify-between px-4 py-2 bg-[#252526] border-b border-white/5">
+                            <div className="rounded-xl overflow-hidden my-6 shadow-lg border !border-slate-700 bg-slate-900 !bg-slate-900 !text-slate-100">
+                                <div className="flex items-center justify-between px-4 py-2 bg-slate-800 !bg-slate-800 border-b !border-slate-700">
                                     <div className="flex space-x-1.5">
                                         <div className="w-2.5 h-2.5 rounded-full bg-red-500/50" />
                                         <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/50" />
                                         <div className="w-2.5 h-2.5 rounded-full bg-green-500/50" />
                                     </div>
-                                    <div className="text-xs text-slate-500 font-mono uppercase tracking-wider">
+                                    <div className="text-xs text-slate-400 font-mono uppercase tracking-wider">
                                         {language || 'text'}
                                     </div>
                                 </div>
@@ -259,7 +259,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
                                             padding: 0,
                                             margin: 0,
                                         },
-                                        className: '!bg-transparent !p-0 !m-0 !box-border'
+                                        className: '!bg-transparent !p-0 !m-0 !box-border !text-slate-100'
                                     }}
                                     customStyle={{
                                         margin: 0,
@@ -267,6 +267,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
                                         background: 'transparent',
                                         fontSize: '0.9rem',
                                         lineHeight: '1.6',
+                                        color: '#e4e4e7', // Force light text color (Zinc 200) for contrast
                                     }}
                                 >
                                     {codeString}
