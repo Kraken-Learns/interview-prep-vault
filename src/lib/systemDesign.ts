@@ -6,6 +6,7 @@ export interface SystemDesignTopic {
     category: 'core-concepts' | 'deep-dives' | 'problem-set';
     content: string;
     date: string;
+    order?: number;
 }
 
 export async function getAllSystemDesignTopics(): Promise<SystemDesignTopic[]> {
@@ -33,8 +34,19 @@ export async function getAllSystemDesignTopics(): Promise<SystemDesignTopic[]> {
             category: data.category || 'core-concepts',
             content,
             date: data.date || new Date().toISOString(),
+            order: data.order,
         });
     }
 
-    return topics;
+    // Sort by order if present, otherwise fallback to date or title
+    return topics.sort((a, b) => {
+        if (a.order !== undefined && b.order !== undefined) {
+            return a.order - b.order;
+        }
+        if (a.order !== undefined) return -1;
+        if (b.order !== undefined) return 1;
+
+        // Fallback to title
+        return a.title.localeCompare(b.title);
+    });
 }
