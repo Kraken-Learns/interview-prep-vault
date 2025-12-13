@@ -16,24 +16,13 @@ There isn't a "one size fits all" API style. The three dominant paradigms you mu
 graph TD
     Client[Client]
     
-    subgraph REST
-    R_Res[Resource-Based]
-    R_Verbs[HTTP Verbs]
-    end
-    
-    subgraph GraphQL
-    G_Single[Single Endpoint]
-    G_Query[Flexible Query]
-    end
-    
-    subgraph RPC
-    RPC_Func[Function Call]
-    RPC_Proto[Binary/Protobuf]
-    end
+    REST["**REST**<br>JSON over HTTP<br>Resource Management<br>"]
+    GraphQL["**GraphQL**<br>Granular resource<br>fetch<br>"]
+    RPC["**RPC**<br>gRPC or Apache Thrift<br>Binary over HTTP2<br>"]
 
-    Client -->|GET /users/123| REST
-    Client -->|POST /graphql { user(id: 123) { name } }| GraphQL
-    Client -->|GetUser(id=123)| RPC
+    Client -->|"GET /users/123"| REST
+    Client -->|"POST /graphql { user(id: 123) ... }"| GraphQL
+    Client -->|"GetUser(id=123)"| RPC
     
     style REST fill:#e0f2fe,stroke:#0284c7
     style GraphQL fill:#f0fdf4,stroke:#16a34a
@@ -71,22 +60,29 @@ Client sends a pointer (cursor) to the *last item* it saw. The server simply fet
 *   **SQL**: `SELECT * FROM products WHERE id > LastSeenID LIMIT 20;`
 
 ```mermaid
-sequenceDiagram
-    participant Client
-    participant Server
-    participant DB
+graph TD
+    %% Nodes
+    subgraph "Step 1: Initial Request"
+    Req1["**Client**<br>GET /items?limit=5"] --> SQL1["**Server/DB**<br>SELECT * FROM items LIMIT 5"]
+    SQL1 --> Res1["**Response**<br>{ data: [1-5], cursor: 'id_5' }"]
+    end
     
-    Note over Client, DB: Cursor Pagination Flow
+    subgraph "Step 2: Next Page (User Scrolls)"
+    Req2["**Client**<br>GET /items?limit=5&cursor='id_5'"] --> SQL2["**Server/DB**<br>SELECT ... WHERE id > 'id_5'"]
+    SQL2 --> Res2["**Response**<br>{ data: [6-10], cursor: 'id_10' }"]
+    end
     
-    Client->>Server: GET /items?limit=5
-    Server->>DB: SELECT * FROM items LIMIT 5
-    DB-->>Server: [Item1...Item5]
-    Server-->>Client: { data: [...], next_cursor: "Item5_ID" }
+    Res1 -.-> Req2
+
+    %% Styles
+    style Req1 fill:#f9fafb,stroke:#6b7280,stroke-width:2px
+    style SQL1 fill:#f0fdf4,stroke:#16a34a,stroke-width:2px
+    style Res1 fill:#e0f2fe,stroke:#0284c7,stroke-width:2px
     
-    Client->>Server: GET /items?limit=5&cursor="Item5_ID"
-    Server->>DB: SELECT * FROM items WHERE id > "Item5_ID" LIMIT 5
-    DB-->>Server: [Item6...Item10]
-    ```
+    style Req2 fill:#f9fafb,stroke:#6b7280,stroke-width:2px
+    style SQL2 fill:#f0fdf4,stroke:#16a34a,stroke-width:2px
+    style Res2 fill:#e0f2fe,stroke:#0284c7,stroke-width:2px
+```
 
 ---
 
@@ -103,14 +99,14 @@ Protect your services from being overwhelmed (intentional DDoS or accidental bug
 
 ```mermaid
 graph LR
-    subgraph Token_Bucket ["Token Bucket (Allows Bursts)"]
+    subgraph "Token Bucket (Allows Bursts)"
         TB_Tokens((Token)) --> TB_Bucket[Bucket]
         TB_Req[Request] --> TB_Decision{Tokens?}
-        TB_Decision -- Yes --> TB_Pass[Pass & Remove Token]
+        TB_Decision -- Yes --> TB_Pass[Pass & Remove]
         TB_Decision -- No --> TB_Drop[Drop Request]
     end
     
-    style Token_Bucket fill:#fefce8,stroke:#eab308
+    style TB_Bucket fill:#fefce8,stroke:#eab308
 ```
 
 ---
