@@ -63,10 +63,10 @@ color = 2
 **Visual representation:**
 
 **Before:**
-![Example 1 Before](images/flood-fill-ex1-before.png)
+![Example 1 Before](/interview-prep-vault/images/set1/flood-fill-ex1-before.png)
 
 **After:**
-![Example 1 After](images/flood-fill-ex1-after.png)
+![Example 1 After](/interview-prep-vault/images/set1/flood-fill-ex1-after.png)
 
 **Explanation:** 
 - Start at pixel `[1,1]` with color `1`
@@ -101,10 +101,10 @@ color = 2
 **Visual representation:**
 
 **Before:**
-![Example 2 Before](images/flood-fill-ex2-before.png)
+![Example 2 Before](/interview-prep-vault/images/set1/flood-fill-ex2-before.png)
 
 **After:**
-![Example 2 After](images/flood-fill-ex2-after.png)
+![Example 2 After](/interview-prep-vault/images/set1/flood-fill-ex2-after.png)
 
 **Explanation:** 
 - Start at pixel `[1,1]` with color `0`
