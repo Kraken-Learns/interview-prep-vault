@@ -63,26 +63,10 @@ color = 2
 **Visual representation:**
 
 **Before:**
-```
-╔═══╦═══╦═══╗
-║ 1 ║ 1 ║ 1 ║
-╠═══╬═══╬═══╣
-║ 1 ║ 1*║ 0 ║  (* = starting pixel at [1,1])
-╠═══╬═══╬═══╣
-║ 1 ║ 0 ║ 1 ║
-╚═══╩═══╩═══╝
-```
+![Example 1 Before](images/flood-fill-ex1-before.png)
 
 **After:**
-```
-╔═══╦═══╦═══╗
-║ 2 ║ 2 ║ 2 ║
-╠═══╬═══╬═══╣
-║ 2 ║ 2 ║ 0 ║
-╠═══╬═══╬═══╣
-║ 2 ║ 0 ║ 1 ║
-╚═══╩═══╩═══╝
-```
+![Example 1 After](images/flood-fill-ex1-after.png)
 
 **Explanation:** 
 - Start at pixel `[1,1]` with color `1`
@@ -117,26 +101,10 @@ color = 2
 **Visual representation:**
 
 **Before:**
-```
-╔═══╦═══╦═══╗
-║ 1 ║ 0 ║ 1 ║
-╠═══╬═══╬═══╣
-║ 1 ║ 0*║ 0 ║  (* = starting pixel at [1,1])
-╠═══╬═══╬═══╣
-║ 0 ║ 0 ║ 1 ║
-╚═══╩═══╩═══╝
-```
+![Example 2 Before](images/flood-fill-ex2-before.png)
 
 **After:**
-```
-╔═══╦═══╦═══╗
-║ 1 ║ 2 ║ 1 ║
-╠═══╬═══╬═══╣
-║ 1 ║ 2 ║ 2 ║
-╠═══╬═══╬═══╣
-║ 2 ║ 2 ║ 1 ║
-╚═══╩═══╩═══╝
-```
+![Example 2 After](images/flood-fill-ex2-after.png)
 
 **Explanation:** 
 - Start at pixel `[1,1]` with color `0`
