@@ -1,7 +1,7 @@
 ---
 title: "Surrounded Regions"
 difficulty: "Medium"
-tags: ["Matrix", "DFS", "BFS", "Union Find"]
+tags: ["Matrix", "DFS", "Graph"]
 date: "2023-10-27"
 source: "Hello interview"
 starterCode:
@@ -68,16 +68,11 @@ grid = [
 
 **Visual Representation:**
 
-```text
-Before:                 After:
-X X X X O (Border)      X X X X O (Safe)
-X X O X X (Inner)       X X X X X (Flipped)
-X X O X O (Border)      X X X X O (Safe)
-X O X X X (Border)      X O X X X (Safe)
-X O X X X (Border)      X O X X X (Safe)
-    ^
-    This O at bottom is connected to border
-```
+**Before:**
+![Example 1 Before](/interview-prep-vault/images/set1/surrounded_regions_ex1_before.svg)
+
+**After:**
+![Example 1 After](/interview-prep-vault/images/set1/surrounded_regions_ex1_after.svg)
 
 **Explanation:** 
 - The `'O'`s at `(1, 2)` and `(2, 2)` are connected to each other, but they are surrounded by `'X'`s on all sides except... wait, let's trace carefully.
@@ -112,8 +107,13 @@ grid = [
 ]
 ```
 
-**Explanation:** 
-- All `'O'`s are connected to the border.
+**Visual Representation:**
+
+**Before:**
+![Example 2 Before](/interview-prep-vault/images/set1/surrounded_regions_ex2_before.svg)
+
+**After:**
+![Example 2 After](/interview-prep-vault/images/set1/surrounded_regions_ex2_after.svg)
 
 ---
 
