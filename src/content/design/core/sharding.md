@@ -38,17 +38,17 @@ A lookup service maintains a map of `Key -> Shard`.
 ```mermaid
 graph TD
     subgraph Range [Range Based]
-    R_In[Key: 1500] --> R_Logic{1000 < Key < 2000?}
+    R_In["Key: 1500"] --> R_Logic{"1000 < Key < 2000?"}
     R_Logic -- Yes --> S2[Shard B]
     end
 
     subgraph Hash [Hash Based]
-    H_In[Key: 'Alicia'] --> H_Logic{hash('Alicia') % 3}
+    H_In["Key: 'Alicia'"] --> H_Logic{"hash('Alicia') % 3"}
     H_Logic -- "Result: 0" --> S_A[Shard A]
     end
 
     subgraph Directory [Directory Based]
-    D_In[Key: 'Tenant-X'] --> D_Map[Lookup Table]
+    D_In["Key: 'Tenant-X'"] --> D_Map[Lookup Table]
     D_Map -- "Map: X -> Shard C" --> S_C[Shard C]
     end
     
@@ -80,7 +80,6 @@ A common issue is that physical servers aren't evenly spaced, leading to "clumps
 *   **Result**: Even load distribution and smoother rebalancing.
 
 ```mermaid
-```mermaid
 graph LR
     subgraph HashRing [Consistent Hashing Ring concept]
     direction LR
@@ -95,7 +94,6 @@ graph LR
     style N1 fill:#fce7f3,stroke:#db2777
     style N2 fill:#dbeafe,stroke:#2563eb
     style N3 fill:#dcfce7,stroke:#16a34a
-```
 ```
 
 ---
