@@ -8,7 +8,14 @@ order: 6
 
 Sharding (or Horizontal Scaling) is the process of splitting a large dataset across multiple servers (shards). It is the eventual requirement for any system that grows beyond the limits of a single machine's write capacity or storage.
 
-## 1. Sharding Strategies
+## 1. Choosing a Shard Key
+
+The most critical decision in sharding is picking the **Shard Key**.
+*   **High Cardinality**: The key must have many possible values. `Gender` is a bad key (only a few shards possible). `User_ID` is a good key.
+*   **Even Distribution**: Data should spread evenly. A key like `Creation_Date` is bad because all new data goes to the same "today" shard.
+*   **Aligns with Usage**: Shard by the field you query most. If you shard by `User_ID` but always query by `Email`, you'll hit every shard (Scatter-Gather).
+
+## 2. Sharding Strategies
 
 How do we decide which server holds which data?
 
@@ -60,7 +67,7 @@ graph TD
 
 ---
 
-## 2. Consistent Hashing
+## 3. Consistent Hashing
 
 To solve the reshuffling problem of Hash Based sharding, we use a **Hash Ring**.
 1.  Map both **Servers** and **Data Keys** to the same 0-360° circle.
@@ -73,32 +80,27 @@ A common issue is that physical servers aren't evenly spaced, leading to "clumps
 *   **Result**: Even load distribution and smoother rebalancing.
 
 ```mermaid
-graph TD
-    subgraph Ring [Consistent Hashing Ring]
-    
-    N_A1((Node A-1)) -.-> K1[Key 1]
-    K1 --> N_B2((Node B-2))
-    N_B2 -.-> K2[Key 2]
-    K2 --> N_C1((Node C-1))
-    
-    N_C1 -.-> K3[Key 3]
-    K3 --> N_A2((Node A-2))
-    
+```mermaid
+graph LR
+    subgraph HashRing [Consistent Hashing Ring concept]
+    direction LR
+    N1((Node A)) --> K1[Key 1]
+    K1 --> N2((Node B))
+    N2 --> K2[Key 2]
+    K2 --> N3((Node C))
+    N3 --> K3[Key 3]
+    K3 -.-> N1
     end
     
-    style N_A1 fill:#fce7f3,stroke:#db2777
-    style N_A2 fill:#fce7f3,stroke:#db2777
-    style N_B2 fill:#dbeafe,stroke:#2563eb
-    style N_C1 fill:#dcfce7,stroke:#16a34a
-    
-    style K1 fill:#f1f5f9,stroke:#64748b,stroke-dasharray: 5 5
-    style K2 fill:#f1f5f9,stroke:#64748b,stroke-dasharray: 5 5
-    style K3 fill:#f1f5f9,stroke:#64748b,stroke-dasharray: 5 5
+    style N1 fill:#fce7f3,stroke:#db2777
+    style N2 fill:#dbeafe,stroke:#2563eb
+    style N3 fill:#dcfce7,stroke:#16a34a
+```
 ```
 
 ---
 
-## 3. Sharding Challenges
+## 4. Sharding Challenges
 
 Sharding is complex. Only do it when you strictly need to.
 
@@ -111,6 +113,9 @@ If `User_ID` is the shard key, and "Justin Bieber" has 100M followers, the shard
 ### 🧩 Cross-Shard Consistency
 Transactions that span multiple shards (e.g., Transfer money from User A on Shard 1 to User B on Shard 2) are dangerous.
 *   **Avoid**: Design your schema so transactions stay local (e.g., Shard by `Order_ID` so all line items are together).
+*   **Result Caching**: Cache the results of expensive cross-shard joins to minimize frequency.
+*   **Denormalization**: Duplicate necessary data across shards (e.g., store small User summary in Order shard) to avoid joins.
+*   **Eventual Consistency**: Accept that data on different shards generally won't update instantly.
 *   **Sagas Pattern**: If you *must* cross shards, do not use 2-Phase Commit (too slow). Use **Sagas**:
     1.  Execute local transaction on Shard 1.
     2.  Publish event.
