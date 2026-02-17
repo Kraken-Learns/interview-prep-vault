@@ -85,14 +85,14 @@ graph TD
     LB[Load Balancer]
     WebServer[Web Servers]
     
-    subgraph "Service Layer"
+    subgraph ServiceLayer ["Service Layer"]
     Shortener[Shortening Service]
     Redirect[Redirection Service]
     end
     
-    Cache[(**Redis Cache**<br>Hot URLs)]
-    DB[(**Database**<br>Key-Value Store)]
-    KeyGen[Key Generation Service<br>(KGS)]
+    Cache[("**Redis Cache**<br>Hot URLs")]
+    DB[("**Database**<br>Key-Value Store")]
+    KeyGen["Key Generation Service<br>(KGS)"]
 
     Client -->|1. Shorten Request| LB
     Client -->|2. Click Short Link| LB
